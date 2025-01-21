@@ -1,30 +1,27 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+// import "./App.css";
 
-function App() {
-	const [count, setCount] = useState(0);
+// function App() {
+//   return <h1>Home</h1>;
+// }
 
-	return (
-		<>
-			<div>
-				<a href="https://vite.dev" target="_blank">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<h1 className="text-yellow-500">Hellooo</h1>
-			</div>
-			<p className="read-the-docs">
-				Click on the Vite and React logos to learn more
-			</p>
-		</>
-	);
-}
+// export default App;
+
+import { Link } from "react-router-dom"; // Or use any routing library you are using.
+import MovingBus from "./Components/MovingBus";
+
+const App = () => {
+  //   const isAuthenticated = false; // You can use a state or props to check the authentication status.
+  const hasLoginRoute = true; // Replace this with actual check for login route
+  //   const hasRegisterRoute = true; // Replace this with actual check for register route
+
+  return (
+    <div className="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
+      {hasLoginRoute && (
+        <div className="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10"></div>
+      )}
+      <MovingBus />
+    </div>
+  );
+};
 
 export default App;
