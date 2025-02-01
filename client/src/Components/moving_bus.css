@@ -3,7 +3,7 @@
   height: 100vh;
 
   background: linear-gradient(100deg, #b2e082, #068fa1);
-  font-family: 'Oswald', sans-serif;
+  font-family: "Oswald", sans-serif;
 }
 #road {
   /* padding-top: 100px; */
@@ -375,7 +375,7 @@
 
 .parafront {
   font-size: 2em;
-  font-family: 'IM Fell Great Primer';
+  font-family: "IM Fell Great Primer";
   position: relative;
   color: #fff;
   text-align: center;
