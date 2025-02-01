@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from corsheaders.defaults import default_headers
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dt#hd(8a8iv98_&xc)okf4fz_dl$^xp#)mgfyaoe^_35)q2poz'
+SECRET_KEY = 'django-insecure-lzyuk$((e#xpqud-yx@()g4_=60!y%+y1^op^nu9ir6c$1n9!f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,12 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'rest_framework',
-    'allauth',
-    'allauth.account',
+    'base',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,9 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    # Add the account middleware:
-    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -72,14 +72,6 @@ TEMPLATES = [
             ],
         },
     },
-]
-
-AUTHENTICATION_BACKENDS = [ 
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by email
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
@@ -132,10 +124,42 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR,  'staticfiles')
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'), )
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]  # Make sure the port number matches the one you're using for the React app.
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173","http://192.168.1.6:5173"]  # Make sure the port number matches the one you're using for the React app.
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'DELETE',
+    'PATCH',
+    'OPTIONS',  # Allow preflight (OPTIONS)
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFToken',
+]
+
+CSRF_COOKIE_NAME = "csrftoken"  # Name of the CSRF cookie
+CSRF_COOKIE_SECURE = False  # Make sure this is False for local development
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to access the CSRF cookie
+CSRF_COOKIE_SAMESITE = "Lax"  # Or "Strict", depending on your needs
+
+# CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',  # Add the origin of your React app here
+]
