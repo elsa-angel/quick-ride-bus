@@ -6,8 +6,6 @@ import {
   _boolean,
   _fullName,
   _taskNames,
-  _postTitles,
-  _description,
   _productNames,
 } from './_mock';
 
