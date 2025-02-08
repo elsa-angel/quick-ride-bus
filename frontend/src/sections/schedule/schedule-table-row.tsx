@@ -15,7 +15,7 @@ import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
+export type ScheduleProps = {
   id: string;
   name: string;
   role: string;
@@ -25,13 +25,13 @@ export type UserProps = {
   isVerified: boolean;
 };
 
-type UserTableRowProps = {
-  row: UserProps;
+type ScheduleTableRowProps = {
+  row: ScheduleProps;
   selected: boolean;
   onSelectRow: () => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+export function ScheduleTableRow({ row, selected, onSelectRow }: ScheduleTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,9 +45,9 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
@@ -72,14 +72,14 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
         </TableCell>
 
-        <TableCell align="right">
+        {/* <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
-      <Popover
+      {/* <Popover
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
@@ -112,7 +112,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             Delete
           </MenuItem>
         </MenuList>
-      </Popover>
+      </Popover> */}
     </>
   );
 }
