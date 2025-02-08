@@ -13,6 +13,8 @@ import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
 
+import { RouterLink } from 'src/routes/components';
+
 // ----------------------------------------------------------------------
 
 export function SignInView() {
@@ -77,7 +79,7 @@ export function SignInView() {
         <Typography variant="h5">Sign in</Typography>
         <Typography variant="body2" color="text.secondary">
           Don’t have an account?
-          <Link variant="subtitle2" sx={{ ml: 0.5 }}>
+          <Link href="/register" component={RouterLink} variant="subtitle2" sx={{ ml: 0.5 }}>
             Get started
           </Link>
         </Typography>

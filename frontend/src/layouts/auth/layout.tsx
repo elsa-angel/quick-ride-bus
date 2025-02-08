@@ -53,11 +53,11 @@ export function AuthLayout({ sx, children, header }: AuthLayoutProps) {
             rightArea: (
               <Link
                 component={RouterLink}
-                href="#"
+                href="/"
                 color="inherit"
                 sx={{ typography: 'subtitle2' }}
               >
-                Need help?
+                Go Back
               </Link>
             ),
           }}
