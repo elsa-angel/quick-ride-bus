@@ -21,23 +21,27 @@ def csrf_cookie(request):
 def RegisterView(request):
     if request.method == "POST":
         data = json.loads(request.body) 
+        username = data['email']
         name = data['name']
         email = data['email']
         password = data['password']
         password_confirmation = data['password_confirmation']
 
-        # if request.method == "POST":
-        # data = json.loads(request.body)  
-        # name = data.get('name')
-        # email = data.get('email')
-        # password = data.get('password')
-        # password_confirmation = data.get('password_confirmation')
+        # Split the name into first_name and last_name
+        name_parts = name.split(' ')  # This splits by spaces
+
+        if len(name_parts) > 1:
+            first_name = name_parts[0]
+            last_name = ' '.join(name_parts[1:])  # Join remaining parts in case there's a middle name
+        else:
+            first_name = name_parts[0]
+            last_name = ''  # If there's no last name, set it as empty string
 
         user_data_has_error = False
         response_data = {} 
 
         # Check if username already exists
-        if User.objects.filter(username=name).exists():
+        if User.objects.filter(username=username).exists():
             user_data_has_error = True
             response_data['error'] = "Username already exists"
 
@@ -62,7 +66,9 @@ def RegisterView(request):
         # If no errors, create the user
         try:
             new_user = User.objects.create_user(
-                username=name, 
+                first_name=first_name,
+                last_name=last_name,
+                username=username, 
                 email=email,
                 password=password
             )
@@ -77,18 +83,20 @@ def RegisterView(request):
 
 @csrf_exempt
 def LoginView(request):
-    import rpdb; rpdb.set_trace()
+    # import rpdb; rpdb.set_trace()
     
     if request.method == "POST":
         data = json.loads(request.body)
         email = data['email']
         password = data['password']
-
-        user = authenticate(request, email=email, password=password)
+        # import rpdb; rpdb.set_trace()
+        user = authenticate(request, username=email, password=password)
 
         if user is not None:
             login(request, user)
             response_data = {
+                "first_name": user.first_name,
+                "email": user.email,
                 "success": True,
                 "message": "Login successful"
             }
@@ -105,6 +113,8 @@ def LoginView(request):
         "error": "Invalid request method"
     }
     return JsonResponse(response_data, status=405)
+
+
 
 
 
