@@ -36,6 +36,23 @@ const Register: React.FC = () => {
   const submit: FormEventHandler = async (e) => {
     e.preventDefault();
 
+    if (data.password !== data.password_confirmation) {
+      setErrors({
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "Not same password",
+      });
+      return;
+    } else {
+      setErrors({
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+      });
+    }
+
     setProcessing(true);
     // Make the actual API call here for registration
     try {
@@ -132,6 +149,7 @@ const Register: React.FC = () => {
                 autoComplete="new-password"
                 onChange={(e) => setData({ ...data, password: e.target.value })}
                 required
+                minLength={5}
               />
               {errors.password && (
                 <div className="text-red-600 text-sm mt-2">
@@ -159,6 +177,7 @@ const Register: React.FC = () => {
                   setData({ ...data, password_confirmation: e.target.value })
                 }
                 required
+                minLength={5}
               />
               {errors.password_confirmation && (
                 <div className="text-red-600 text-sm mt-2">

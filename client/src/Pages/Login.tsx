@@ -1,8 +1,8 @@
 import { useState, useEffect, FormEventHandler } from "react";
 import GuestLayout from "../Layouts/GuestLayout";
 import PrimaryButton from "../Components/PrimaryButton";
-import Authenticated from "../Layouts/AuthenticatedLayout";
 import { customFetch } from "../utils/functions";
+import { useAuth } from "./AuthContext";
 
 interface LoginProps {
   status?: string;
@@ -30,6 +30,8 @@ const Login: React.FC<LoginProps> = ({ status, canResetPassword }) => {
     };
   }, []);
 
+  const { authUser, login } = useAuth();
+
   const submit: FormEventHandler = async (e) => {
     e.preventDefault();
 
@@ -40,14 +42,12 @@ const Login: React.FC<LoginProps> = ({ status, canResetPassword }) => {
         method: "POST",
         body: JSON.stringify(data),
       });
-
-      const result = await response.json();
-      if (result.errors) {
-        setErrors(result.errors);
-      } else {
-        // Handle successful login
-        console.log("Login successful", result);
-      }
+      const userData = {
+        isAuthenticated: true,
+        name: response.first_name,
+      };
+      login(userData);
+      window.location.href = "/home";
     } catch (error) {
       console.error("Login error:", error);
     } finally {
@@ -57,7 +57,6 @@ const Login: React.FC<LoginProps> = ({ status, canResetPassword }) => {
 
   return (
     <GuestLayout>
-      {/* <Authenticated> */}
       {/* <div className="relative top-[calc(100vh/5)] flex items-center justify-center bg-gray-100 py-6 px-4 sm:px-6 lg:px-8"> */}
       <div className="flex items-center justify-center bg-gray-100 py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
@@ -161,7 +160,6 @@ const Login: React.FC<LoginProps> = ({ status, canResetPassword }) => {
           </form>
         </div>
       </div>
-      {/* </Authenticated> */}
     </GuestLayout>
   );
 };

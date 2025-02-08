@@ -4,6 +4,8 @@ import ApplicationLogo from "../Components/ApplicationLogo";
 import Dropdown from "../Components/Dropdown";
 import NavLink from "../Components/NavLink"; // Updated NavLink import
 import ResponsiveNavLink from "../Components/ResponsiveNavLink";
+import { useAuth } from "../Pages/AuthContext";
+import { customFetch } from "../utils/functions";
 
 export default function Authenticated({
   header,
@@ -12,14 +14,21 @@ export default function Authenticated({
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
 
+  const { authUser, logout } = useAuth();
+
   const handleLogout = async () => {
-    await fetch("/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    window.location.href = "/login"; // Redirect after logout
+    try {
+      await customFetch("/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      logout();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -29,13 +38,13 @@ export default function Authenticated({
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="shrink-0 flex items-center">
-                <Link to="/dashboard">
+                <Link to="/home">
                   <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                 </Link>
               </div>
 
               <div className="hidden sm:flex space-x-8 sm:-my-px sm:ms-10 sm:flex-row">
-                <NavLink to="/dashboard">Dashboard</NavLink>
+                <NavLink to="/home">Home</NavLink>
                 <NavLink to="/contact">Contact</NavLink>
                 <NavLink to="/my_bookings">My Bookings</NavLink>
               </div>
@@ -120,7 +129,7 @@ export default function Authenticated({
           }
         >
           <div className="pt-2 pb-3 space-y-1">
-            <ResponsiveNavLink to="/dashboard">Dashboard</ResponsiveNavLink>
+            <ResponsiveNavLink to="/home">Home</ResponsiveNavLink>
           </div>
 
           <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
