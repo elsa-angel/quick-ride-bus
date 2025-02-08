@@ -113,13 +113,6 @@ export const _timeline = [...Array(5)].map((_, index) => ({
 
 // ----------------------------------------------------------------------
 
-export const _tasks = [...Array(5)].map((_, index) => ({
-  id: _id(index),
-  name: _taskNames(index),
-}));
-
-// ----------------------------------------------------------------------
-
 export const _notifications = [
   {
     id: _id(1),
