@@ -11,7 +11,7 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 // ----------------------------------------------------------------------
 
 export const HomePage = lazy(() => import('src/pages/home'));
-export const UserPage = lazy(() => import('src/pages/schedule'));
+export const SchedulePage = lazy(() => import('src/pages/schedule'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
 
@@ -44,7 +44,7 @@ export function Router() {
       ),
       children: [
         { element: <HomePage />, index: true },
-        { path: 'user', element: <UserPage /> },
+        { path: 'Schedule', element: <SchedulePage /> },
       ],
     },
     {
