@@ -15,16 +15,37 @@ import { Iconify } from 'src/components/iconify';
 
 import { RouterLink } from 'src/routes/components';
 
+import axiosInstance from 'src/api/axios-instance';
+
 // ----------------------------------------------------------------------
 
 export function SignInView() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [data, setData] = useState({
+    email: '',
+    password: '',
+  });
 
-  const handleSignIn = useCallback(() => {
-    router.push('/');
-  }, [router]);
+  const handleSignIn = useCallback(async () => {
+    try {
+      const response = await axiosInstance.post('/login', { data });
+      console.log(response);
+
+      // if (response) {
+      //   setErrors(response.errors);
+      // } else {
+      //   // Handle successful registration
+      //   console.log('User registered:', response);
+      //   // Redirect or perform additional actions
+      // }
+      router.push('/');
+    } catch (error) {
+      console.error('Error registering user:', error);
+    }
+    // setProcessing(false);
+  }, [router, data]);
 
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
@@ -32,7 +53,8 @@ export function SignInView() {
         fullWidth
         name="email"
         label="Email address"
-        defaultValue="hello@gmail.com"
+        value={data.email}
+        onChange={(e) => setData({ ...data, email: e.target.value })}
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
       />
@@ -45,7 +67,8 @@ export function SignInView() {
         fullWidth
         name="password"
         label="Password"
-        defaultValue="@demo1234"
+        value={data.password}
+        onChange={(e) => setData({ ...data, password: e.target.value })}
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
         InputProps={{

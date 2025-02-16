@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -15,16 +15,84 @@ import { Iconify } from 'src/components/iconify';
 
 import { RouterLink } from 'src/routes/components';
 
+import axios from 'axios';
+import axiosInstance from 'src/api/axios-instance';
 // ----------------------------------------------------------------------
 
 export function RegisterView() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [data, setData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-  const handleRegister = useCallback(() => {
-    router.push('/');
-  }, [router]);
+  // const [errors, setErrors] = useState({
+  //   name: '',
+  //   email: '',
+  //   password: '',
+  //   confirmPassword: '',
+  // });
+  // const [processing, setProcessing] = useState(false);
+
+  // // Reset form fields on component unmount
+  // useEffect(() => {
+  //   return () => {
+  //     setData({
+  //       name: '',
+  //       email: '',
+  //       password: '',
+  //       confirmPassword: '',
+  //     });
+  //   };
+  // }, []);
+
+  const handleInputChange = (e: any) => {
+    const { name, value } = e.target;
+    setData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  // if (data.password !== data.confirmPassword) {
+  //   setErrors({
+  //     name: '',
+  //     email: '',
+  //     password: '',
+  //     confirmPassword: 'Not same password',
+  //   });
+  //   return;
+  // } else {
+  //   setErrors({
+  //     name: '',
+  //     email: '',
+  //     password: '',
+  //     confirmPassword: '',
+  //   });
+  // }
+
+  // setProcessing(true);
+  // Make the actual API call here for registration
+
+  const handleRegister = useCallback(async () => {
+    try {
+      const response = await axiosInstance.post('/register', { data });
+      console.log(response);
+
+      // if (response) {
+      //   setErrors(response.errors);
+      // } else {
+      //   // Handle successful registration
+      //   console.log('User registered:', response);
+      //   // Redirect or perform additional actions
+      // }
+      router.push('/');
+    } catch (error) {
+      console.error('Error registering user:', error);
+    }
+    // setProcessing(false);
+  }, [router, data]);
 
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
@@ -32,6 +100,8 @@ export function RegisterView() {
         fullWidth
         name="name"
         label="Name"
+        value={data.name}
+        onChange={(e) => setData({ ...data, name: e.target.value })}
         placeholder="name"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
@@ -40,19 +110,19 @@ export function RegisterView() {
         fullWidth
         name="email"
         label="Email address"
+        value={data.email}
+        onChange={(e) => setData({ ...data, email: e.target.value })}
         placeholder="hello@gmail.com"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
       />
 
-      {/* <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
-        Forgot password?
-      </Link> */}
-
       <TextField
         fullWidth
         name="password"
         label="Password"
+        value={data.password}
+        onChange={(e) => setData({ ...data, password: e.target.value })}
         placeholder="@demo1234"
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
@@ -70,8 +140,10 @@ export function RegisterView() {
 
       <TextField
         fullWidth
-        name="password"
+        name="confirmPassword"
         label="Confirm Password"
+        value={data.confirmPassword}
+        onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
         placeholder="@demo1234"
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
