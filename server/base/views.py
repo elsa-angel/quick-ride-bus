@@ -19,13 +19,15 @@ def csrf_cookie(request):
 
 @csrf_exempt
 def RegisterView(request):
+    # import rpdb; rpdb.set_trace()
+
     if request.method == "POST":
-        data = json.loads(request.body) 
+        data = json.loads(request.body)['data']
         username = data['email']
         name = data['name']
         email = data['email']
         password = data['password']
-        password_confirmation = data['password_confirmation']
+        password_confirmation = data['confirmPassword']
 
         # Split the name into first_name and last_name
         name_parts = name.split(' ')  # This splits by spaces
@@ -83,10 +85,10 @@ def RegisterView(request):
 
 @csrf_exempt
 def LoginView(request):
-    # import rpdb; rpdb.set_trace()
+    import rpdb; rpdb.set_trace()
     
     if request.method == "POST":
-        data = json.loads(request.body)
+        data = json.loads(request.body)['data']
         email = data['email']
         password = data['password']
         # import rpdb; rpdb.set_trace()
@@ -95,8 +97,9 @@ def LoginView(request):
         if user is not None:
             login(request, user)
             response_data = {
-                "first_name": user.first_name,
-                "email": user.email,
+                # "first_name": user.first_name,
+                "email": user.username,
+                "password":user.password,
                 "success": True,
                 "message": "Login successful"
             }
