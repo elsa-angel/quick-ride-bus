@@ -20,7 +20,7 @@ export function OverviewAnalyticsView() {
         Hi, Welcome back 👋
       </Typography>
 
-      <Grid container spacing={3}>
+      {/* <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Weekly sales"
@@ -135,7 +135,7 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} md={6} lg={4}>
           <AnalyticsOrderTimeline title="Order timeline" list={_timeline} />
         </Grid>
-      </Grid>
+      </Grid> */}
     </DashboardContent>
   );
 }
