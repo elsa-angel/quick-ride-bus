@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { TextField, Box } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { useRouter } from 'src/routes/hooks';
+import { RouterLink } from 'src/routes/components';
+import axiosInstance from 'src/api/axios-instance';
 
 function SearchForm() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     from: '',
     to: '',
@@ -61,23 +66,31 @@ function SearchForm() {
     return isValid;
   };
 
-  const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      console.log('Form submitted with data:', formData);
+  const handleSubmit = useCallback(async () => {
+    if (!validateForm()) {
+      // Stop the form submission if validation fails
+      return;
     }
-  };
+    try {
+      const response = await axiosInstance.post('/schedule/', { formData });
+      console.log(response);
+
+      // if (response) {
+      //   setErrors(response.errors);
+      // } else {
+      //   // Handle successful registration
+      //   console.log('User registered:', response);
+      //   // Redirect or perform additional actions
+      // }
+      // router.push('/schedule');
+    } catch (error) {
+      console.error('Error :', error);
+    }
+    // setProcessing(false);
+  }, []);
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      display="flex"
-      flexDirection="row"
-      alignItems="flex-end"
-      gap={1}
-    >
+    <Box display="flex" flexDirection="row" alignItems="flex-end" gap={1}>
       <TextField
         fullWidth
         name="from"
@@ -129,9 +142,11 @@ function SearchForm() {
         onChange={handleChange}
         InputLabelProps={{ shrink: true }}
         sx={{ width: 265 }}
-        inputProps={{
-          min: new Date().toTimeString().slice(0, 5),
-        }}
+        inputProps={
+          {
+            // min: new Date().toTimeString().slice(0, 5),
+          }
+        }
         error={Boolean(errors.time)}
         helperText={errors.time}
       />
@@ -142,6 +157,7 @@ function SearchForm() {
         type="submit"
         color="inherit"
         variant="contained"
+        onClick={handleSubmit}
         sx={{ width: 265, height: '56px' }}
       >
         Search

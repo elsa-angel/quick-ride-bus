@@ -12,6 +12,8 @@ from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_protect,csrf_exempt
 import json
+from .models import Schedule
+from datetime import datetime
 
 @csrf_protect
 def csrf_cookie(request):
@@ -85,7 +87,7 @@ def RegisterView(request):
 
 @csrf_exempt
 def LoginView(request):
-    import rpdb; rpdb.set_trace()
+    # import rpdb; rpdb.set_trace()
     
     if request.method == "POST":
         data = json.loads(request.body)['data']
@@ -117,10 +119,97 @@ def LoginView(request):
     }
     return JsonResponse(response_data, status=405)
 
+@csrf_exempt
+def SearchScheduleView(request):
+    # import rpdb; rpdb.set_trace()
 
+    if request.method == 'POST':
+        # data = json.loads(request.body)
+        data = json.loads(request.body)['formData']
+        from_city = data['from']
+        to_city = data['to']
+        date = data['date']
+        time = data['time']
 
+    
+        try:
+            # Convert the input date and time to a datetime object for comparison
+            search_datetime = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
 
+            weekday = search_datetime.strftime('%A')
+        except ValueError:
+            return JsonResponse({"error": "Invalid date or time format."}, status=400)
 
+        # Filter schedules by matching from_city, to_city, date, and time
+        schedules = Schedule.objects.filter(
+            stops__icontains=from_city,  # Search for departure city in the stops
+        ).filter(
+            stops__icontains=to_city    # Search for destination city in the stops
+        ).filter(
+            running_days__icontains=weekday,  # Assuming running_days includes the date or day information
+        )
 
+        # import rpdb; rpdb.set_trace()
+        # Filter further based on time if needed
+        available_schedules = []
+        for schedule in schedules:
+            # Assuming that stops_timings stores the time info in a suitable format
+            stop_timings = schedule.stops_timings.split(',')
+            stops = schedule.stops.split(',')  # Split stops into list for easier processing
+            
+            stop_times_dict = {}  # Store times for each stop in a dictionary
+            from_time = None
+            to_time = None
 
+            # Ensure the "from" stop comes before the "to" stop in the stops field
+            if from_city in stops and to_city in stops:
+                from_index = stops.index(from_city)
+                to_index = stops.index(to_city)
+                
+                if from_index < to_index:  # Check if "from" comes before "to"
+                    for idx, stop_time in enumerate(stop_timings):
+                        stop_time_obj = None
+                        try:
+                            stop_time_obj = datetime.strptime(stop_time.strip(), "%H:%M").time()  # Convert to time object
+                            stop_times_dict[stops[idx]] = stop_time_obj
+                            if stops[idx] == from_city:
+                                from_time = stop_time_obj
+                            elif stops[idx] == to_city:
+                                to_time = stop_time_obj
+                        except ValueError:
+                            continue
 
+                    # Check if the times for both "from" and "to" are available
+                    if from_time and to_time:
+                        # Compare the stop times to the search time
+                        if from_time <= search_datetime.time() <= to_time:
+                            available_schedules.append(schedule)
+                else:
+                    # "to" is before "from" in stops list
+                    continue
+            else:
+                # One of the cities is not in the stops list
+                continue
+
+        if not available_schedules:
+            return JsonResponse({"message": "No schedules found matching your criteria."}, status=404)
+
+        # Format the schedules for the response
+        response_data = {
+            "schedules": [
+                {
+                    "bus_name": schedule.bus.bus_name,
+                    "from": from_city,
+                    "to": to_city,
+                    "date": date,
+                    "from_time": str(from_time),
+                    "to_time": str(to_time),
+                }
+                for schedule in available_schedules
+            ]
+        }
+
+        return JsonResponse(response_data, status=200)
+
+    # If method is not POST, return method not allowed
+    return JsonResponse({"error": "Invalid request method"}, status=405)
