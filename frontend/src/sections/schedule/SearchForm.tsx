@@ -79,15 +79,6 @@ function SearchForm({ setSchedules }: any) {
         console.log(response);
 
         setSchedules(response?.data?.schedules);
-
-        // if (response) {
-        //   setErrors(response.errors);
-        // } else {
-        //   // Handle successful registration
-        //   console.log('User registered:', response);
-        //   // Redirect or perform additional actions
-        // }
-        // router.push('/schedule');
       } catch (error) {
         console.error('Error :', error);
       }

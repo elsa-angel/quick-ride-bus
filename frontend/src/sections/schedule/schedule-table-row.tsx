@@ -12,6 +12,7 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
+import { LoadingButton } from '@mui/lab';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +24,8 @@ export type ScheduleProps = {
   date: string;
   from_time: string;
   to_time: string;
+  time_difference: string;
+  fare: string;
 };
 
 type ScheduleTableRowProps = {
@@ -39,6 +42,9 @@ export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
+  const handleBookNow = async (schedule: any) => {
+    window.location.href = `/seats`;
+  };
 
   return (
     <>
@@ -51,6 +57,22 @@ export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
         <TableCell>{row.date}</TableCell>
         <TableCell>{row.from_time}</TableCell>
         <TableCell>{row.to_time}</TableCell>
+        <TableCell>{row.time_difference}</TableCell>
+        <TableCell>{row.fare}</TableCell>
+        <TableCell>
+          <LoadingButton
+            fullWidth
+            size="large"
+            type="submit"
+            color="primary"
+            variant="contained"
+            onClick={handleBookNow}
+            sx={{ width: 265, height: '56px' }}
+          >
+            Book Now
+          </LoadingButton>
+        </TableCell>
+
         {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell> */}

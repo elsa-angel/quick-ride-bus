@@ -37,41 +37,36 @@ export function ScheduleView() {
       </Box>
 
       <Card>
-        {/* <ScheduleTableToolbar
-          numSelected={table.selected.length}
-          filterName={filterName}
-          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFilterName(event.target.value);
-            table.onResetPage();
-          }}
-        /> */}
-
         <SearchForm setSchedules={setSchedules} />
 
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <ScheduleTableHead
-                headLabel={[
-                  { id: 'bus_name', label: 'Bus Name' },
-                  { id: 'from', label: 'Departure' },
-                  { id: 'to', label: 'Arrival' },
-                  { id: 'date', label: 'Date' },
-                  { id: 'from_time', label: 'Departure Time' },
-                  { id: 'to_time', label: 'Arrival Time' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {schedules.map((row: any) => (
-                  <ScheduleTableRow key={row.id} row={row} />
-                ))}
+        {schedules?.length ? (
+          <Scrollbar>
+            <TableContainer sx={{ overflow: 'unset' }}>
+              <Table sx={{ minWidth: 800 }}>
+                <ScheduleTableHead
+                  headLabel={[
+                    { id: 'bus_name', label: 'Bus Name' },
+                    { id: 'from', label: 'Departure' },
+                    { id: 'to', label: 'Arrival' },
+                    { id: 'date', label: 'Date' },
+                    { id: 'from_time', label: 'Departure Time' },
+                    { id: 'to_time', label: 'Arrival Time' },
+                    { id: 'time_difference', label: 'Total Duration' },
+                    { id: 'fare', label: 'Fare' },
+                    { id: '', label: 'Book' },
+                  ]}
+                />
+                <TableBody>
+                  {schedules.map((row: any) => (
+                    <ScheduleTableRow key={row.id} row={row} />
+                  ))}
 
-                <TableEmptyRows emptyRows={schedules?.length} height={68} />
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
+                  <TableEmptyRows emptyRows={schedules?.length} height={68} />
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
+        ) : null}
       </Card>
     </DashboardContent>
   );
