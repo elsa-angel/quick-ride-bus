@@ -115,7 +115,7 @@ export function ScheduleTableToolbar({
           <IconButton></IconButton>
         </Tooltip>
       )} */}
-      <SearchForm />
+      {/* <SearchForm /> */}
     </Toolbar>
   );
 }

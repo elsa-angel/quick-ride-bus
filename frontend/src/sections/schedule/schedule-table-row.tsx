@@ -17,21 +17,19 @@ import { Iconify } from 'src/components/iconify';
 
 export type ScheduleProps = {
   id: string;
-  name: string;
-  role: string;
-  status: string;
-  company: string;
-  avatarUrl: string;
-  isVerified: boolean;
+  bus_name: string;
+  from: string;
+  to: string;
+  date: string;
+  from_time: string;
+  to_time: string;
 };
 
 type ScheduleTableRowProps = {
   row: ScheduleProps;
-  selected: boolean;
-  onSelectRow: () => void;
 };
 
-export function ScheduleTableRow({ row, selected, onSelectRow }: ScheduleTableRowProps) {
+export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -44,12 +42,20 @@ export function ScheduleTableRow({ row, selected, onSelectRow }: ScheduleTableRo
 
   return (
     <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+      <TableRow hover tabIndex={-1} role="checkbox">
+        <TableCell component="th" scope="row">
+          {row.bus_name}
+        </TableCell>
+        <TableCell>{row.from}</TableCell>
+        <TableCell>{row.to}</TableCell>
+        <TableCell>{row.date}</TableCell>
+        <TableCell>{row.from_time}</TableCell>
+        <TableCell>{row.to_time}</TableCell>
         {/* <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell> */}
 
-        <TableCell component="th" scope="row">
+        {/* <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
             <Avatar alt={row.name} src={row.avatarUrl} />
             {row.name}
@@ -70,7 +76,7 @@ export function ScheduleTableRow({ row, selected, onSelectRow }: ScheduleTableRo
 
         <TableCell>
           <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
-        </TableCell>
+        </TableCell> */}
 
         {/* <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
