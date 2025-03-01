@@ -12,7 +12,7 @@ from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_protect,csrf_exempt
 import json
-from .models import Schedule
+from .models import Schedule,Message
 from datetime import datetime
 
 @csrf_protect
@@ -198,6 +198,7 @@ def SearchScheduleView(request):
         response_data = {
             "schedules": [
                 {
+                    "id": schedule.id,
                     "bus_name": schedule.bus.bus_name,
                     "from": from_city,
                     "to": to_city,
@@ -213,3 +214,57 @@ def SearchScheduleView(request):
 
     # If method is not POST, return method not allowed
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def ContactUsView(request):
+    if request.method == "POST":
+        # Parse the incoming JSON data from the request body
+        try:
+            data = json.loads(request.body)['data']
+            name = data.get('name', '').strip()
+            email = data.get('email', '').strip()
+            message = data.get('message', '').strip()
+
+            # Initialize an empty response dictionary
+            response_data = {}
+
+            # Validate the data
+            if not name:
+                response_data['error'] = "Name is required."
+                return JsonResponse(response_data, status=400)
+            
+            if not email:
+                response_data['error'] = "Email is required."
+                return JsonResponse(response_data, status=400)
+            
+            if not message:
+                response_data['error'] = "Message is required."
+                return JsonResponse(response_data, status=400)
+            
+            # Optionally, check if email is valid (simple regex check)
+            import re
+            email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+            if not re.match(email_regex, email):
+                response_data['error'] = "Invalid email address."
+                return JsonResponse(response_data, status=400)
+
+            # Save the message data to the database
+            message_instance = Message.objects.create(
+                name=name,
+                email=email,
+                message=message
+            )
+
+            response_data['success'] = "Your message has been submitted successfully!"
+            return JsonResponse(response_data, status=201)
+        
+        except json.JSONDecodeError:
+            response_data['error'] = "Invalid JSON data."
+            return JsonResponse(response_data, status=400)
+    
+    else:
+        # Handle cases where the request method is not POST
+        response_data = {
+            "error": "Invalid request method."
+        }
+        return JsonResponse(response_data, status=405)

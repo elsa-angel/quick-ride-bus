@@ -18,6 +18,11 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
+    title: 'Contact Us',
+    path: '/contact',
+    icon: icon('ic-user'),
+  },
+  {
     title: 'Sign in',
     path: '/sign-in',
     icon: icon('ic-lock'),
