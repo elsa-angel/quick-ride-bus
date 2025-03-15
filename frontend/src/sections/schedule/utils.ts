@@ -69,11 +69,5 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  // if (filterName) {
-  //   inputData = inputData.filter(
-  //     (schedule) => schedule.bus_name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-  //   );
-  // }
-
   return inputData;
 }

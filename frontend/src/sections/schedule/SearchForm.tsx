@@ -11,7 +11,7 @@ function SearchForm({ setSchedules }: any) {
   const [formData, setFormData] = useState({
     from: 'a',
     to: 'b',
-    date: '2025-03-03',
+    date: '2025-03-18',
     time: '09:00',
   });
 

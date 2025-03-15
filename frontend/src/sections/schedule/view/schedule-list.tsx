@@ -6,21 +6,15 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
 
-import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { TableNoData } from '../table-no-data';
 import { ScheduleTableRow } from '../schedule-table-row';
 import { ScheduleTableHead } from '../schedule-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { ScheduleTableToolbar } from '../schedule-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { ScheduleProps } from '../schedule-table-row';
 import SearchForm from '../SearchForm';
 
 // ----------------------------------------------------------------------
