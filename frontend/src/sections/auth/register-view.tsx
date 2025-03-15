@@ -36,7 +36,7 @@ export function RegisterView() {
     confirmPassword: '',
   });
 
-  const handleInputChange = (e: any) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -110,7 +110,7 @@ export function RegisterView() {
         name="name"
         label="Name"
         value={data.name}
-        onChange={(e) => setData({ ...data, name: e.target.value })}
+        onChange={handleChange}
         placeholder="name"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
@@ -122,7 +122,7 @@ export function RegisterView() {
         name="email"
         label="Email address"
         value={data.email}
-        onChange={(e) => setData({ ...data, email: e.target.value })}
+        onChange={handleChange}
         placeholder="hello@gmail.com"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
@@ -135,7 +135,7 @@ export function RegisterView() {
         name="password"
         label="Password"
         value={data.password}
-        onChange={(e) => setData({ ...data, password: e.target.value })}
+        onChange={handleChange}
         placeholder="@demo1234"
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
@@ -158,7 +158,7 @@ export function RegisterView() {
         name="confirmPassword"
         label="Confirm Password"
         value={data.confirmPassword}
-        onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
+        onChange={handleChange}
         placeholder="@demo1234"
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
