@@ -1,13 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { TextField, Box } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
 import axiosInstance from 'src/api/axios-instance';
 
 function SearchForm({ setSchedules }: any) {
-  const router = useRouter();
-
   const [formData, setFormData] = useState({
     from: 'a',
     to: 'b',

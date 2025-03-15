@@ -18,23 +18,19 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
+    title: 'My Bookings',
+    path: '/bookings',
+    icon: icon('ic-user'),
+  },
+  {
     title: 'Contact Us',
     path: '/contact',
     icon: icon('ic-user'),
   },
-  {
-    title: 'Sign in',
-    path: '/sign-in',
-    icon: icon('ic-lock'),
-  },
-  {
-    title: 'Register',
-    path: '/register',
-    icon: icon('ic-lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic-disabled'),
-  },
+
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic-disabled'),
+  // },
 ];

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -15,7 +15,6 @@ import { Iconify } from 'src/components/iconify';
 
 import { RouterLink } from 'src/routes/components';
 
-import axios from 'axios';
 import axiosInstance from 'src/api/axios-instance';
 // ----------------------------------------------------------------------
 

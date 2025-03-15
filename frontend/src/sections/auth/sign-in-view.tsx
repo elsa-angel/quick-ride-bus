@@ -35,7 +35,7 @@ export function SignInView() {
     password: '',
   });
 
-  const { authUser, setAuthUser } = useAuth();
+  const { setAuthUser } = useAuth();
 
   const handleSignIn = useCallback(async () => {
     // Validate form
