@@ -20,51 +20,30 @@ export function SeatAvailabilityView() {
   }
 
   const rows = Math.ceil(totalSeats / 4); // Assuming 4 seats per row
-  const columns = ['A', 'B', 'C', 'D'];
 
   const [seats, setSeats] = useState<ISeat[]>([]);
   const [reservedSeats, setReservedSeats] = useState<string[]>([]);
   const [occupiedSeats, setOccupiedSeats] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchReservedSeats = async () => {
-      try {
-        const response = await axiosInstance.get(`/reserved_seats/${bookingId}`);
-        setOccupiedSeats(response?.data?.reserved_seats);
+  const seatLayout = useCallback((): ISeat[] => {
+    const columns = ['A', 'B', 'C', 'D'];
 
-        const booking = await axiosInstance.get(`/bookings/${bookingId}`);
-        setReservedSeats(booking?.data?.reserved_seats);
-      } catch (error) {
-        console.error('Error fetching reserved seats:', error);
-      }
-    };
+    const isSeatOccupied = (seat: string): boolean => occupiedSeats?.includes(seat);
 
-    fetchReservedSeats();
-  }, [bookingId]);
-
-  useEffect(() => {
-    const layout = seatLayout();
-    setSeats(layout);
-  }, [reservedSeats]);
-
-  const seatLayout = (): ISeat[] => {
     const layout: ISeat[] = [];
-    for (let rowIndex = 1; rowIndex <= rows; rowIndex++) {
-      for (const column of columns) {
-        const seatId = `${rowIndex}${column}`;
+    Array.from({ length: rows }, (_, rowIndex) =>
+      columns.forEach((column) => {
+        const seatId = `${rowIndex + 1}${column}`;
         layout.push({
           id: seatId,
           occupied: isSeatOccupied(seatId),
           selected: reservedSeats.includes(seatId) ?? false,
         });
-      }
-    }
-    return layout;
-  };
+      })
+    );
 
-  const isSeatOccupied = (seat: string): boolean => {
-    return occupiedSeats?.includes(seat);
-  };
+    return layout;
+  }, [reservedSeats, rows, occupiedSeats]); // Add reservedSeats as a dependency because seatLayout uses it
 
   const handleSeatChange = (id: string) => {
     setSeats(
@@ -85,13 +64,34 @@ export function SeatAvailabilityView() {
     try {
       await axiosInstance.patch(`/bookings/${bookingId}`, {
         reserved_seats: selectedSeats,
-        // amount: numOfSeatsSelected * fare
+        // amount: numOfSeatsSelected * fare,
       });
       console.log('Booking Updated Successfully');
     } catch (error) {
       console.error('Error updating booking:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchReservedSeats = async () => {
+      try {
+        const response = await axiosInstance.get(`/reserved_seats/${bookingId}`);
+        setOccupiedSeats(response?.data?.reserved_seats);
+
+        const booking = await axiosInstance.get(`/bookings/${bookingId}`);
+        setReservedSeats(booking?.data?.reserved_seats);
+      } catch (error) {
+        console.error('Error fetching reserved seats:', error);
+      }
+    };
+
+    fetchReservedSeats();
+  }, [bookingId]);
+
+  useEffect(() => {
+    const layout = seatLayout();
+    setSeats(layout);
+  }, [reservedSeats, seatLayout]);
   return (
     <DashboardContent>
       <Box display="flex" flexDirection="column" alignItems="flex-start" mb={5}>
@@ -108,7 +108,7 @@ export function SeatAvailabilityView() {
               variant="contained"
               onClick={onClickPayNow}
               sx={{ width: 200, height: '50px' }}
-              disabled={numOfSeatsSelected == 0}
+              disabled={numOfSeatsSelected === 0}
             >
               Book Now
             </LoadingButton>
@@ -121,7 +121,7 @@ export function SeatAvailabilityView() {
           <div className="front">
             <h1>Please Select seats</h1>
           </div>
-          <div className="exit exit--front fuselage"></div>
+          <div className="exit exit--front fuselage">.</div>
           <ol className="cabin fuselage">
             {Array.from({ length: totalSeats / 4 }, (_, rowIndex) => (
               <li key={rowIndex} className={`row row--${rowIndex + 1}`}>
@@ -146,7 +146,7 @@ export function SeatAvailabilityView() {
               </li>
             ))}
           </ol>
-          <div className="exit exit--back fuselage"></div>
+          <div className="exit exit--back fuselage">.</div>
         </div>
       </Box>
     </DashboardContent>
