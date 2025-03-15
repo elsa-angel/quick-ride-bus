@@ -99,11 +99,13 @@ def LoginView(request):
         if user is not None:
             login(request, user)
             response_data = {
-                # "first_name": user.first_name,
-                "email": user.username,
-                "password":user.password,
-                "success": True,
-                "message": "Login successful"
+                "isAuthenticated": True,
+                "user": {
+                    "name": user.first_name + user.last_name,
+                    "email": user.username,
+                    "id": request.user.id
+                }
+            
             }
             return JsonResponse(response_data, status=200)
         else:
@@ -120,7 +122,26 @@ def LoginView(request):
     return JsonResponse(response_data, status=405)
 
 @csrf_exempt
+def LogoutView(request):
+    if request.method == "POST":
+        logout(request)
+
+        response_data = {
+            "success": True,
+            "message": "Logout successful"
+        }
+        return JsonResponse(response_data, status=200)
+
+    response_data = {
+        "success": False,
+        "error": "Invalid request method"
+    }
+    return JsonResponse(response_data, status=405)
+
+@csrf_exempt
 def SearchScheduleView(request):
+    import rpdb; rpdb.set_trace()
+
     if request.method == 'POST':
         data = json.loads(request.body)['formData']
         from_city = data['from']
@@ -134,6 +155,8 @@ def SearchScheduleView(request):
             weekday = search_datetime.strftime('%A')
         except ValueError:
             return JsonResponse({"error": "Invalid date or time format."}, status=400)
+
+        user_id = request.user.id if request.user.is_authenticated else None
 
         # Filter schedules by matching from_city, to_city, date, and time
         schedules = Schedule.objects.filter(
@@ -195,7 +218,8 @@ def SearchScheduleView(request):
                                 "from_time": from_time,
                                 "to_time": to_time,
                                 "time_difference": time_difference,
-                                "fare": fare
+                                "fare": fare,
+                                "user_id": user_id
                             })
                 else:
                     continue
@@ -210,6 +234,7 @@ def SearchScheduleView(request):
             "schedules": [
                 {
                     "id": schedule['schedule'].id,
+                    "user_id": schedule['user_id'],
                     "bus_name": schedule['schedule'].bus.bus_name,
                     "from": from_city,
                     "to": to_city,
