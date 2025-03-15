@@ -30,69 +30,79 @@ export function RegisterView() {
     confirmPassword: '',
   });
 
-  // const [errors, setErrors] = useState({
-  //   name: '',
-  //   email: '',
-  //   password: '',
-  //   confirmPassword: '',
-  // });
-  // const [processing, setProcessing] = useState(false);
-
-  // // Reset form fields on component unmount
-  // useEffect(() => {
-  //   return () => {
-  //     setData({
-  //       name: '',
-  //       email: '',
-  //       password: '',
-  //       confirmPassword: '',
-  //     });
-  //   };
-  // }, []);
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // if (data.password !== data.confirmPassword) {
-  //   setErrors({
-  //     name: '',
-  //     email: '',
-  //     password: '',
-  //     confirmPassword: 'Not same password',
-  //   });
-  //   return;
-  // } else {
-  //   setErrors({
-  //     name: '',
-  //     email: '',
-  //     password: '',
-  //     confirmPassword: '',
-  //   });
-  // }
-
-  // setProcessing(true);
-  // Make the actual API call here for registration
-
   const handleRegister = useCallback(async () => {
+    const validateForm = () => {
+      const formErrors = { ...errors };
+      let isValid = true;
+
+      // Validate name
+      if (!data.name) {
+        formErrors.name = 'Please enter your name';
+        isValid = false;
+      } else {
+        formErrors.name = '';
+      }
+
+      // Validate email
+      if (!data.email) {
+        formErrors.email = 'Please enter your email address';
+        isValid = false;
+      } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+        formErrors.email = 'Please enter a valid email address';
+        isValid = false;
+      } else {
+        formErrors.email = '';
+      }
+
+      // Validate password
+      if (!data.password) {
+        formErrors.password = 'Please enter your password';
+        isValid = false;
+      } else if (data.password.length < 5) {
+        formErrors.password = 'Password should be at least 5 characters long';
+        isValid = false;
+      } else {
+        formErrors.password = '';
+      }
+
+      // Validate confirm password
+      if (data.password !== data.confirmPassword) {
+        formErrors.confirmPassword = 'Passwords do not match';
+        isValid = false;
+      } else {
+        formErrors.confirmPassword = '';
+      }
+
+      setErrors(formErrors);
+      return isValid;
+    };
+
+    if (!validateForm()) {
+      return; // Stop if validation fails
+    }
+
     try {
       const response = await axiosInstance.post('/register', { data });
       console.log(response);
 
-      // if (response) {
-      //   setErrors(response.errors);
-      // } else {
-      //   // Handle successful registration
-      //   console.log('User registered:', response);
-      //   // Redirect or perform additional actions
-      // }
+      // Redirect to home page or another page after successful registration
       router.push('/');
     } catch (error) {
       console.error('Error registering user:', error);
     }
-    // setProcessing(false);
-  }, [router, data]);
+  }, [router, data, errors]);
 
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
@@ -105,6 +115,8 @@ export function RegisterView() {
         placeholder="name"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
+        error={!!errors.name}
+        helperText={errors.name}
       />
       <TextField
         fullWidth
@@ -115,6 +127,8 @@ export function RegisterView() {
         placeholder="hello@gmail.com"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
+        error={!!errors.email}
+        helperText={errors.email}
       />
 
       <TextField
@@ -136,6 +150,8 @@ export function RegisterView() {
           ),
         }}
         sx={{ mb: 3 }}
+        error={!!errors.password}
+        helperText={errors.password}
       />
 
       <TextField
@@ -157,6 +173,8 @@ export function RegisterView() {
           ),
         }}
         sx={{ mb: 3 }}
+        error={!!errors.confirmPassword}
+        helperText={errors.confirmPassword}
       />
 
       <LoadingButton
@@ -185,7 +203,7 @@ export function RegisterView() {
       </Box>
 
       {renderForm}
-      {/* 
+
       <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
         <Typography
           variant="overline"
@@ -193,19 +211,13 @@ export function RegisterView() {
         >
           OR
         </Typography>
-      </Divider> */}
+      </Divider>
 
-      {/* <Box gap={1} display="flex" justifyContent="center">
+      <Box gap={1} display="flex" justifyContent="center">
         <IconButton color="inherit">
           <Iconify icon="logos:google-icon" />
         </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="eva:github-fill" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="ri:twitter-x-fill" />
-        </IconButton>
-      </Box> */}
+      </Box>
     </>
   );
 }

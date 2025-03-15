@@ -22,6 +22,8 @@ import { AccountPopover } from '../components/account-popover';
 import { LanguagePopover } from '../components/language-popover';
 import { NotificationsPopover } from '../components/notifications-popover';
 
+import { useAuth } from '../components/AuthContext';
+
 // ----------------------------------------------------------------------
 
 export type DashboardLayoutProps = {
@@ -38,6 +40,8 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
   const [navOpen, setNavOpen] = useState(false);
 
   const layoutQuery: Breakpoint = 'lg';
+
+  const { authUser } = useAuth();
 
   return (
     <LayoutSection
@@ -78,6 +82,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                 {/* <LanguagePopover data={_langs} /> */}
                 {/* <NotificationsPopover data={_notifications} /> */}
                 <AccountPopover
+                  isAuthenticated={authUser.isAuthenticated}
                   data={[
                     {
                       label: 'Home',

@@ -17,6 +17,8 @@ import { RouterLink } from 'src/routes/components';
 
 import axiosInstance from 'src/api/axios-instance';
 
+import { useAuth } from '../../layouts/components/AuthContext';
+
 // ----------------------------------------------------------------------
 
 export function SignInView() {
@@ -28,24 +30,56 @@ export function SignInView() {
     password: '',
   });
 
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
+
+  const { authUser, setAuthUser } = useAuth();
+
   const handleSignIn = useCallback(async () => {
+    // Validate form
+    const validateForm = () => {
+      const formErrors = { ...errors };
+      let isValid = true;
+
+      // Validate email
+      if (!data.email) {
+        formErrors.email = 'Please enter your email address';
+        isValid = false;
+      } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+        formErrors.email = 'Please enter a valid email address';
+        isValid = false;
+      } else {
+        formErrors.email = '';
+      }
+
+      // Validate password
+      if (!data.password) {
+        formErrors.password = 'Please enter your password';
+        isValid = false;
+      } else {
+        formErrors.password = '';
+      }
+
+      setErrors(formErrors);
+      return isValid;
+    };
+
+    if (!validateForm()) {
+      return; // Stop if validation fails
+    }
+
     try {
       const response = await axiosInstance.post('/login', { data });
       console.log(response);
 
-      // if (response) {
-      //   setErrors(response.errors);
-      // } else {
-      //   // Handle successful registration
-      //   console.log('User registered:', response);
-      //   // Redirect or perform additional actions
-      // }
+      setAuthUser(response?.data);
       router.push('/');
     } catch (error) {
-      console.error('Error registering user:', error);
+      console.error('Error during login:', error);
     }
-    // setProcessing(false);
-  }, [router, data]);
+  }, [router, data, errors, setAuthUser]);
 
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
@@ -57,6 +91,8 @@ export function SignInView() {
         onChange={(e) => setData({ ...data, email: e.target.value })}
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
+        error={!!errors.email}
+        helperText={errors.email}
       />
 
       <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
@@ -81,6 +117,8 @@ export function SignInView() {
           ),
         }}
         sx={{ mb: 3 }}
+        error={!!errors.password}
+        helperText={errors.password}
       />
 
       <LoadingButton
@@ -122,12 +160,6 @@ export function SignInView() {
       <Box gap={1} display="flex" justifyContent="center">
         <IconButton color="inherit">
           <Iconify icon="logos:google-icon" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="eva:github-fill" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="ri:twitter-x-fill" />
         </IconButton>
       </Box>
     </>
