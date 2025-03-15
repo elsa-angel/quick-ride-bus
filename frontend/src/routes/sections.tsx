@@ -13,6 +13,8 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 export const HomePage = lazy(() => import('src/pages/home'));
 export const SchedulePage = lazy(() => import('src/pages/schedule'));
 export const ContactUsPage = lazy(() => import('src/pages/contact'));
+export const MyBookingsPage = lazy(() => import('src/pages/bookings'));
+
 export const SeatAvailabilityPage = lazy(() => import('src/pages/seat-availability'));
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -49,6 +51,7 @@ export function Router() {
         { element: <HomePage />, index: true },
         { path: 'Schedule', element: <SchedulePage /> },
         { path: 'Contact', element: <ContactUsPage /> },
+        { path: 'Bookings', element: <MyBookingsPage /> },
         { path: 'Seats', element: <SeatAvailabilityPage /> },
       ],
     },
