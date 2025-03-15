@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -34,3 +35,25 @@ class Message(models.Model):
 
     # def __str__(self):
     #     return self.name
+
+class Booking(models.Model):
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)  
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    amount = models.CharField(max_length=255) 
+    reserved_seats = models.CharField(max_length=255)  
+    departure_stop = models.CharField(max_length=255) 
+    departure_time = models.CharField(max_length=255)  
+    arrival_stop = models.CharField(max_length=255)  
+    arrival_time = models.CharField(max_length=255)  
+    booking_date = models.CharField(max_length=255)  
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    # def __str__(self):
+    #     return f"Booking {self.id} by {self.user}"
+
+    class Meta:
+        db_table = 'Booking'  
