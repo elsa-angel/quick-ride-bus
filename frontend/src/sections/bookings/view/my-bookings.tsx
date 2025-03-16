@@ -29,33 +29,34 @@ export function BookingsView() {
       </Box>
 
       <Card>
-        {bookings?.length ? (
-          <Scrollbar>
-            <TableContainer sx={{ overflow: 'unset' }}>
-              <Table sx={{ minWidth: 800 }}>
-                <BookingsTableHead
-                  headLabel={[
-                    { id: 'bus_name', label: 'Bus Name' },
-                    { id: 'from', label: 'Departure' },
-                    { id: 'to', label: 'Arrival' },
-                    { id: 'date', label: 'Date' },
-                    { id: 'from_time', label: 'Departure Time' },
-                    { id: 'to_time', label: 'Arrival Time' },
-                    { id: 'time_difference', label: 'Total Duration' },
-                    { id: 'fare', label: 'Fare' },
-                  ]}
-                />
-                <TableBody>
-                  {bookings.map((row: any) => (
-                    <BookingsTableRow key={row.id} row={row} />
-                  ))}
+        {/* {bookings?.length ? ( */}
+        <Scrollbar>
+          <TableContainer sx={{ overflow: 'unset' }}>
+            <Table sx={{ minWidth: 800 }}>
+              <BookingsTableHead
+                headLabel={[
+                  { id: 'bus_name', label: 'Bus Name' },
+                  { id: 'from', label: 'Departure' },
+                  { id: 'to', label: 'Arrival' },
+                  { id: 'date', label: 'Date' },
+                  { id: 'from_time', label: 'Departure Time' },
+                  { id: 'to_time', label: 'Arrival Time' },
+                  { id: 'fare', label: 'Amount' },
+                  { id: 'status', label: 'Status' },
+                  { id: '', label: 'Action' },
+                ]}
+              />
+              <TableBody>
+                {bookings.map((row: any) => (
+                  <BookingsTableRow key={row.id} row={row} />
+                ))}
 
-                  {/* <TableEmptyRows emptyRows={schedules?.length} height={68} /> */}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-        ) : null}
+                {/* <TableEmptyRows emptyRows={schedules?.length} height={68} /> */}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+        {/* ) : null} */}
       </Card>
     </DashboardContent>
   );

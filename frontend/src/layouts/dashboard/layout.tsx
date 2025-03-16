@@ -81,7 +81,6 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                 {/* <LanguagePopover data={_langs} /> */}
                 {/* <NotificationsPopover data={_notifications} /> */}
                 <AccountPopover
-                  isAuthenticated={authUser.isAuthenticated}
                   data={[
                     {
                       label: 'Home',
