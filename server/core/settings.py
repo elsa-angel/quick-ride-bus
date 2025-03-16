@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from corsheaders.defaults import default_headers
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +27,7 @@ SECRET_KEY = 'django-insecure-lzyuk$((e#xpqud-yx@()g4_=60!y%+y1^op^nu9ir6c$1n9!f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -55,6 +54,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend'
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # This enables session-based authentication
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Make sure the user is authenticated for certain views
+    ],
+}
+
 
 ROOT_URLCONF = 'core.urls'
 
@@ -124,42 +137,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-
-# STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR,  'staticfiles')
-# STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'), )
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173","http://192.168.1.6:5173"]  # Make sure the port number matches the one you're using for the React app.
-
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://192.168.1.6:3039',
+    'http://localhost:3039',
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'DELETE',
-    'PATCH',
-    'OPTIONS',  # Allow preflight (OPTIONS)
-]
-
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'X-CSRFToken',
-]
-
-CSRF_COOKIE_NAME = "csrftoken"  # Name of the CSRF cookie
-CSRF_COOKIE_SECURE = False  # Make sure this is False for local development
-CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to access the CSRF cookie
-CSRF_COOKIE_SAMESITE = "Lax"  # Or "Strict", depending on your needs
-
-# CORS_ALLOW_ALL_ORIGINS = True
-
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',  # Add the origin of your React app here
+    'http://localhost:3039',
+    "http://192.168.1.6:3039"
 ]

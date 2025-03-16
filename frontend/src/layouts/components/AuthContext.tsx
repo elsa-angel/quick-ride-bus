@@ -1,8 +1,11 @@
-import { createContext, useState, useContext, ReactNode, useMemo } from 'react';
+import { Box, Container } from '@mui/material';
+import { createContext, useState, useContext, ReactNode, useMemo, useEffect } from 'react';
+import axiosInstance from 'src/api/axios-instance';
+import { useRouter } from 'src/routes/hooks';
 
 // Define the context type
 interface AuthContextType {
-  authUser: IAuthUser;
+  authUser: IAuthUser | null;
   setAuthUser: Function;
 }
 
@@ -28,15 +31,57 @@ export interface IAuthUser {
 
 // Create a provider component to wrap around the app
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authUser, setAuthUser] = useState<IAuthUser>({
-    isAuthenticated: false,
-    user: {
-      name: '',
-      id: '',
-      email: '',
-    },
-  });
-  const value = useMemo(() => ({ authUser, setAuthUser }), [authUser, setAuthUser]);
+  const [authUser, setAuthUser] = useState<IAuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const router = useRouter();
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  useEffect(() => {
+    let isMounted = true;
+
+    axiosInstance
+      .get('/auth-check')
+      .then((response) => {
+        if (isMounted) setAuthUser(response.data);
+        setSessionExpired(false);
+        if (window.location.href.endsWith('/sign-in')) {
+          router.push('/');
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          if (authUser?.isAuthenticated) setSessionExpired(true);
+          else setAuthUser(null);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [router, authUser?.isAuthenticated]);
+
+  const contextValue = useMemo(() => ({ authUser, setAuthUser }), [authUser]);
+
+  if (loading) {
+    return (
+      <Container maxWidth="sm">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          height="100vh"
+        >
+          {/* <PulsatingDots /> */}
+          Loading...
+        </Box>
+      </Container>
+    );
+  }
+
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

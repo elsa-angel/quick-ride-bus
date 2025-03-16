@@ -10,6 +10,9 @@ from django.urls import reverse
 from .models import *
 from django.http import JsonResponse
 
+from django.middleware.csrf import get_token
+
+
 from django.views.decorators.csrf import csrf_protect,csrf_exempt
 import json
 from .models import Schedule,Message
@@ -19,7 +22,20 @@ from datetime import datetime
 def csrf_cookie(request):
     return JsonResponse({'message': 'CSRF cookie set'})
 
-@csrf_exempt
+def check_authentication(request):
+    csrf_token = get_token(request)
+    if request.user.is_authenticated:
+        return JsonResponse({
+            "isAuthenticated": True,
+            "user": {
+                "id": request.user.id,
+                "username": request.user.username,
+                "email": request.user.email,
+            },
+            'csrftoken': csrf_token
+        },status=200)
+    return JsonResponse({"authenticated": False, "error": "User not logged in", 'csrftoken': csrf_token},status=401)
+
 def RegisterView(request):
     # import rpdb; rpdb.set_trace()
 
@@ -85,60 +101,45 @@ def RegisterView(request):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-@csrf_exempt
+@csrf_protect
 def LoginView(request):
     # import rpdb; rpdb.set_trace()
     
     if request.method == "POST":
-        data = json.loads(request.body)['data']
-        email = data['email']
-        password = data['password']
-        # import rpdb; rpdb.set_trace()
-        user = authenticate(request, username=email, password=password)
+        try:
+            data = json.loads(request.body)['data']
+            email = data['email']
+            password = data['password']
+            # import rpdb; rpdb.set_trace()
+            user = authenticate(request, username=email, password=password)
 
-        if user is not None:
-            login(request, user)
-            response_data = {
-                "isAuthenticated": True,
-                "user": {
-                    "name": user.first_name + user.last_name,
-                    "email": user.username,
-                    "id": request.user.id
-                }
-            
-            }
-            return JsonResponse(response_data, status=200)
-        else:
-            response_data = {
-                "success": False,
-                "error": "Invalid login credentials"
-            }
-            return JsonResponse(response_data, status=400)
+            if user is not None:
+                login(request, user)
+                return JsonResponse ({
+                    "isAuthenticated": True,
+                    "user": {
+                        "id": request.user.id,
+                        "name": user.first_name + user.last_name,
+                        "email": user.username,
+                    }
+                
+                }, status=200)
+            else:
+                 return JsonResponse ({"error": "Invalid login credentials"},status=401)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSOn format"}, status=400)
+        
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
-    response_data = {
-        "success": False,
-        "error": "Invalid request method"
-    }
-    return JsonResponse(response_data, status=405)
-
-@csrf_exempt
 def LogoutView(request):
     if request.method == "POST":
-        logout(request)
+        try:
+            logout(request)
+            return JsonResponse({"message": "Logout successful"}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": "Logout Failed", "details": str(e)}, status=500)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
-        response_data = {
-            "success": True,
-            "message": "Logout successful"
-        }
-        return JsonResponse(response_data, status=200)
-
-    response_data = {
-        "success": False,
-        "error": "Invalid request method"
-    }
-    return JsonResponse(response_data, status=405)
-
-@csrf_exempt
 def SearchScheduleView(request):
     import rpdb; rpdb.set_trace()
 
