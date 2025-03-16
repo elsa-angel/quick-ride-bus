@@ -42,43 +42,41 @@ export function BookingsTableRow({ row }: BookingsTableRowProps) {
     setShowConfirm(true);
   };
   return (
-    <>
-      <TableRow hover tabIndex={-1} role="checkbox">
-        <TableCell component="th" scope="row">
-          {row.bus_name}
-        </TableCell>
-        <TableCell>{row.from}</TableCell>
-        <TableCell>{row.to}</TableCell>
-        <TableCell>{row.date}</TableCell>
-        <TableCell>{row.from_time}</TableCell>
-        <TableCell>{row.to_time}</TableCell>
-        <TableCell>{row.fare}</TableCell>
-        <TableCell>{row.status}</TableCell>
-        <TableCell>
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            color="primary"
-            variant="contained"
-            // onClick={() => updateQrCodeView(true, index)}
-            sx={{ width: 265, height: '56px' }}
-          >
-            View
-          </LoadingButton>
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            color="primary"
-            variant="contained"
-            // onClick={() => handleCancelBooking(booking.id)}
-            sx={{ width: 265, height: '56px' }}
-          >
-            View
-          </LoadingButton>
-        </TableCell>
-      </TableRow>
-    </>
+    <TableRow hover tabIndex={-1} role="checkbox">
+      <TableCell component="th" scope="row">
+        {row.bus_name}
+      </TableCell>
+      <TableCell>{row.from}</TableCell>
+      <TableCell>{row.to}</TableCell>
+      <TableCell>{row.date}</TableCell>
+      <TableCell>{row.from_time}</TableCell>
+      <TableCell>{row.to_time}</TableCell>
+      <TableCell>{row.fare}</TableCell>
+      <TableCell>{row.status}</TableCell>
+      <TableCell>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          color="primary"
+          variant="contained"
+          // onClick={() => updateQrCodeView(true, index)}
+          sx={{ width: 265, height: '56px' }}
+        >
+          View
+        </LoadingButton>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          color="primary"
+          variant="contained"
+          // onClick={() => handleCancelBooking(booking.id)}
+          sx={{ width: 265, height: '56px' }}
+        >
+          View
+        </LoadingButton>
+      </TableCell>
+    </TableRow>
   );
 }

@@ -50,9 +50,6 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     },
     [handleClosePopover, router]
   );
-  const handleRedirect = (path: string) => {
-    router.push(path);
-  };
 
   const { authUser, setAuthUser } = useAuth();
 
@@ -68,105 +65,88 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
   return (
     <>
-      {/* {!authUser.isAuthenticated && (
-        <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 999 }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            sx={{ marginRight: 1 }}
-            onClick={() => handleRedirect('/register')}
-          >
-            Register
-          </Button>
-          <Button variant="outlined" color="primary" onClick={() => handleRedirect('/sign-in')}>
-            Sign In
-          </Button>
-        </Box>
-      )} */}
-      <>
-        <IconButton
-          onClick={handleOpenPopover}
-          sx={{
-            p: '2px',
-            width: 40,
-            height: 40,
-            background: (theme) =>
-              `conic-gradient(${theme.vars.palette.primary.light}, ${theme.vars.palette.warning.light}, ${theme.vars.palette.primary.light})`,
-            ...sx,
-          }}
-          {...other}
-        >
-          <Avatar src="#" alt={authUser?.user?.name} sx={{ width: 1, height: 1 }}>
-            {authUser?.user?.name?.charAt(0).toUpperCase()}
-          </Avatar>
-        </IconButton>
+      <IconButton
+        onClick={handleOpenPopover}
+        sx={{
+          p: '2px',
+          width: 40,
+          height: 40,
+          background: (theme) =>
+            `conic-gradient(${theme.vars.palette.primary.light}, ${theme.vars.palette.warning.light}, ${theme.vars.palette.primary.light})`,
+          ...sx,
+        }}
+        {...other}
+      >
+        <Avatar src="#" alt={authUser?.user?.name} sx={{ width: 1, height: 1 }}>
+          {authUser?.user?.name?.charAt(0).toUpperCase()}
+        </Avatar>
+      </IconButton>
 
-        <Popover
-          open={!!openPopover}
-          anchorEl={openPopover}
-          onClose={handleClosePopover}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          slotProps={{
-            paper: {
-              sx: { width: 200 },
+      <Popover
+        open={!!openPopover}
+        anchorEl={openPopover}
+        onClose={handleClosePopover}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        slotProps={{
+          paper: {
+            sx: { width: 200 },
+          },
+        }}
+      >
+        <Box sx={{ p: 2, pb: 1.5 }}>
+          <Typography variant="subtitle2" noWrap>
+            {authUser?.user.name}
+          </Typography>
+
+          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+            {authUser?.user.email}
+          </Typography>
+        </Box>
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
+
+        <MenuList
+          disablePadding
+          sx={{
+            p: 1,
+            gap: 0.5,
+            display: 'flex',
+            flexDirection: 'column',
+            [`& .${menuItemClasses.root}`]: {
+              px: 1,
+              gap: 2,
+              borderRadius: 0.75,
+              color: 'text.secondary',
+              '&:hover': { color: 'text.primary' },
+              [`&.${menuItemClasses.selected}`]: {
+                color: 'text.primary',
+                bgcolor: 'action.selected',
+                fontWeight: 'fontWeightSemiBold',
+              },
             },
           }}
         >
-          <Box sx={{ p: 2, pb: 1.5 }}>
-            <Typography variant="subtitle2" noWrap>
-              {authUser?.user.name}
-            </Typography>
+          {data.map((option) => (
+            <MenuItem
+              key={option.label}
+              selected={option.href === pathname}
+              onClick={() => handleClickItem(option.href)}
+            >
+              {option.icon}
+              {option.label}
+            </MenuItem>
+          ))}
+        </MenuList>
 
-            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-              {authUser?.user.email}
-            </Typography>
-          </Box>
+        <Divider sx={{ borderStyle: 'dashed' }} />
 
-          <Divider sx={{ borderStyle: 'dashed' }} />
-
-          <MenuList
-            disablePadding
-            sx={{
-              p: 1,
-              gap: 0.5,
-              display: 'flex',
-              flexDirection: 'column',
-              [`& .${menuItemClasses.root}`]: {
-                px: 1,
-                gap: 2,
-                borderRadius: 0.75,
-                color: 'text.secondary',
-                '&:hover': { color: 'text.primary' },
-                [`&.${menuItemClasses.selected}`]: {
-                  color: 'text.primary',
-                  bgcolor: 'action.selected',
-                  fontWeight: 'fontWeightSemiBold',
-                },
-              },
-            }}
-          >
-            {data.map((option) => (
-              <MenuItem
-                key={option.label}
-                selected={option.href === pathname}
-                onClick={() => handleClickItem(option.href)}
-              >
-                {option.icon}
-                {option.label}
-              </MenuItem>
-            ))}
-          </MenuList>
-
-          <Divider sx={{ borderStyle: 'dashed' }} />
-
-          <Box sx={{ p: 1 }}>
-            <Button fullWidth color="error" size="medium" variant="text" onClick={handleLogOut}>
-              Logout
-            </Button>
-          </Box>
-        </Popover>
-      </>
+        <Box sx={{ p: 1 }}>
+          <Button fullWidth color="error" size="medium" variant="text" onClick={handleLogOut}>
+            Logout
+          </Button>
+        </Box>
+      </Popover>
     </>
   );
 }

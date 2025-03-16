@@ -1,5 +1,6 @@
 import { Box, Container } from '@mui/material';
-import { createContext, useState, useContext, ReactNode, useMemo, useEffect } from 'react';
+import { createContext, useState, useContext, useMemo, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import axiosInstance from 'src/api/axios-instance';
 import { useRouter } from 'src/routes/hooks';
 

@@ -1,4 +1,4 @@
-import { _id, _price, _times, _boolean, _fullName, _productNames } from './_mock';
+import { _id, _price, _times, _fullName, _productNames } from './_mock';
 
 // ----------------------------------------------------------------------
 

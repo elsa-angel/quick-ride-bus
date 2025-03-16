@@ -28,32 +28,30 @@ export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
   };
 
   return (
-    <>
-      <TableRow hover tabIndex={-1} role="checkbox">
-        <TableCell component="th" scope="row">
-          {row.bus_name}
-        </TableCell>
-        <TableCell>{row.from}</TableCell>
-        <TableCell>{row.to}</TableCell>
-        <TableCell>{row.date}</TableCell>
-        <TableCell>{row.from_time}</TableCell>
-        <TableCell>{row.to_time}</TableCell>
-        <TableCell>{row.time_difference}</TableCell>
-        <TableCell>{row.fare}</TableCell>
-        <TableCell>
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            color="primary"
-            variant="contained"
-            onClick={handleBookNow}
-            sx={{ width: 265, height: '56px' }}
-          >
-            Book Now
-          </LoadingButton>
-        </TableCell>
-      </TableRow>
-    </>
+    <TableRow hover tabIndex={-1} role="checkbox">
+      <TableCell component="th" scope="row">
+        {row.bus_name}
+      </TableCell>
+      <TableCell>{row.from}</TableCell>
+      <TableCell>{row.to}</TableCell>
+      <TableCell>{row.date}</TableCell>
+      <TableCell>{row.from_time}</TableCell>
+      <TableCell>{row.to_time}</TableCell>
+      <TableCell>{row.time_difference}</TableCell>
+      <TableCell>{row.fare}</TableCell>
+      <TableCell>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          color="primary"
+          variant="contained"
+          onClick={handleBookNow}
+          sx={{ width: 265, height: '56px' }}
+        >
+          Book Now
+        </LoadingButton>
+      </TableCell>
+    </TableRow>
   );
 }
