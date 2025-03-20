@@ -6,13 +6,26 @@ import { LoadingButton } from '@mui/lab';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import axiosInstance from 'src/api/axios-instance';
-import '../seat-availability.css';
+import './seat-availability.css';
 
-export function SeatAvailabilityView() {
-  const totalSeats = 40;
-  const bookingId = 1;
-  const fare = 10;
+interface SeatAvailabilityViewProps {
+  bookingId: number;
+  fare: number;
+  totalSeats: number;
+  updateCurrentStep: (step: number) => void;
+}
 
+// export function SeatAvailabilityView() {
+//   const totalSeats = 40;
+//   const bookingId = 1;
+//   const fare = 10;
+
+export function SeatAvailabilityView({
+  bookingId,
+  fare,
+  totalSeats,
+  updateCurrentStep,
+}: SeatAvailabilityViewProps) {
   interface ISeat {
     id: string;
     occupied: boolean;
@@ -62,10 +75,11 @@ export function SeatAvailabilityView() {
       .join(',');
 
     try {
-      await axiosInstance.patch(`/bookings/${bookingId}`, {
+      await axiosInstance.patch(`/bookings/${bookingId}/`, {
         reserved_seats: selectedSeats,
         // amount: numOfSeatsSelected * fare,
       });
+      updateCurrentStep(2);
       console.log('Booking Updated Successfully');
     } catch (error) {
       console.error('Error updating booking:', error);
@@ -75,10 +89,10 @@ export function SeatAvailabilityView() {
   useEffect(() => {
     const fetchReservedSeats = async () => {
       try {
-        const response = await axiosInstance.get(`/reserved_seats/${bookingId}`);
+        const response = await axiosInstance.get(`/reserved_seats/${bookingId}/`);
         setOccupiedSeats(response?.data?.reserved_seats);
 
-        const booking = await axiosInstance.get(`/bookings/${bookingId}`);
+        const booking = await axiosInstance.get(`/bookings/${bookingId}/`);
         setReservedSeats(booking?.data?.reserved_seats);
       } catch (error) {
         console.error('Error fetching reserved seats:', error);

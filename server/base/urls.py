@@ -8,5 +8,10 @@ urlpatterns = [
     path('logout', views.LogoutView, name='logout'),
     path('auth-check/',views.check_authentication,name="auth-check"),
     path('schedule/', views.SearchScheduleView, name='schedule'),
+    path('bookings/', views.BookingView, name='bookings'),
+    path('bookings/<int:booking_id>/', views.BookingDetailsView, name='booking_details'),
+    path('reserved_seats/<int:booking_id>/', views.SeatAvailabilityView, name='seat_availability'),
+    path('bookings/<int:booking_id>/', views.UpdateBookingSeatsView, name='update_booking_seats'),
+    path('reserved_seats/<int:booking_id>/', views.ReservedSeatsView, name='reserved_seats'),
     path('contact/', views.ContactUsView, name='contact-us'),
 ]

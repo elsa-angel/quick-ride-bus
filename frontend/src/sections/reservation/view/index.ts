@@ -1,1 +1,2 @@
-export * from './seat-availability';
+// export * from './reservation';
+export { default } from './reservation';

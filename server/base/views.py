@@ -9,13 +9,14 @@ from django.utils import timezone
 from django.urls import reverse
 from .models import *
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 from django.middleware.csrf import get_token
 
 
 from django.views.decorators.csrf import csrf_protect,csrf_exempt
 import json
-from .models import Schedule,Message
+from .models import Schedule,Booking,Message
 from datetime import datetime
 
 @csrf_protect
@@ -141,7 +142,7 @@ def LogoutView(request):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 def SearchScheduleView(request):
-    import rpdb; rpdb.set_trace()
+    # import rpdb; rpdb.set_trace()
 
     if request.method == 'POST':
         data = json.loads(request.body)['formData']
@@ -252,6 +253,227 @@ def SearchScheduleView(request):
         return JsonResponse(response_data, status=200)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+def BookingView(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            schedule_id = data['schedule_id']
+            user_id = data['user_id']
+            booking_date = data['booking_date']
+            departure_stop = data['departure_stop']
+            arrival_stop = data['arrival_stop']
+            fare = data['fare']
+            reserved_seats = data.get('reserved_seats', 'null')  
+            departure_time = data['departure_time']
+            arrival_time = data['arrival_time']
+            
+            schedule = Schedule.objects.get(id=schedule_id)
+
+            booking = Booking.objects.create(
+                schedule=schedule,
+                user_id=user_id,
+                amount=fare,  
+                reserved_seats=reserved_seats,
+                departure_stop=departure_stop,
+                departure_time=departure_time,
+                arrival_stop=arrival_stop,
+                arrival_time=arrival_time,
+                booking_date=booking_date
+            )
+            
+            return JsonResponse({
+                'booking_id': booking.id,
+                'message': 'Booking created successfully',
+            }, status=201)
+
+        except Schedule.DoesNotExist:
+            return JsonResponse({"error": "Schedule not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+# def BookingDetailsView(request, booking_id):
+#     try:
+#         # Fetch the booking by its ID
+#         booking = Booking.objects.get(id=booking_id)
+        
+#         # Get related schedule data
+#         schedule = booking.schedule
+        
+#         # Prepare the response data
+#         booking_data = {
+#             'booking_id': booking.id,
+#             'schedule_id': schedule.id,
+#             'user_id': booking.user.id,
+#             'amount': booking.amount,
+#             'reserved_seats': booking.reserved_seats,
+#             'departure_stop': booking.departure_stop,
+#             'departure_time': booking.departure_time,
+#             'arrival_stop': booking.arrival_stop,
+#             'arrival_time': booking.arrival_time,
+#             'booking_date': booking.booking_date,
+#             'created_at': booking.created_at,
+#             'updated_at': booking.updated_at,
+#             'bus_name': schedule.bus.bus_name,  # assuming schedule has a bus related to it
+#             'bus_num_seats': schedule.bus.num_seats  # assuming bus has num_seats field
+#         }
+
+#         return JsonResponse(booking_data, status=200)
+
+#     except Booking.DoesNotExist:
+#         return JsonResponse({"error": "Booking not found."}, status=404)
+    
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=500)
+
+def BookingDetailsView(request, booking_id):
+    try:
+        booking = Booking.objects.get(id=booking_id)
+        response_data = {
+            'booking_id': booking.id,
+            'schedule': {
+                'id': booking.schedule.id,
+                'bus': {
+                    'bus_name': booking.schedule.bus.bus_name,
+                    'num_seats': booking.schedule.bus.num_seats,
+                },
+                # Add more details here if needed
+            },
+            'reserved_seats': booking.reserved_seats,
+            'amount': booking.amount,
+        }
+        return JsonResponse(response_data)
+
+    except Booking.DoesNotExist:
+        return JsonResponse({"error": "Booking not found"}, status=404)
+    
+# def SeatAvailabilityView(request, booking_id):
+#     try:
+#         # Get the booking object
+#         booking = get_object_or_404(Booking, id=booking_id)
+#         schedule = booking.schedule
+        
+#         # Assuming reserved_seats is a comma-separated string of selected seats in the booking
+#         reserved_seats = booking.reserved_seats.split(',') if booking.reserved_seats else []
+        
+#         # Assuming occupied_seats are stored in the schedule or similar model
+#         occupied_seats = schedule.occupied_seats.split(',') if schedule.occupied_seats else []
+
+#         return JsonResponse({
+#             'reserved_seats': reserved_seats,
+#             'occupied_seats': occupied_seats,
+#         })
+
+#     except Booking.DoesNotExist:
+#         return JsonResponse({"error": "Booking not found"}, status=404)
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=400)
+
+def SeatAvailabilityView(request, booking_id):
+    try:
+        # Get the booking object
+        booking = get_object_or_404(Booking, id=booking_id)
+        schedule = booking.schedule
+        
+        # Assuming reserved_seats is a comma-separated string of selected seats in the booking
+        reserved_seats = booking.reserved_seats.split(',') if booking.reserved_seats else []
+
+        # If occupied_seats are tracked by reservations, fetch them based on the schedule and booking date
+        occupied_seats = Reservation.objects.filter(
+            schedule=schedule,
+            status__in=['paid', 'started'],  # Add any relevant status you need
+        ).values_list('reserved_seats', flat=True)
+        
+        # Flatten the list of reserved seats and remove duplicates
+        occupied_seats = list(set(seat for seats in occupied_seats for seat in seats.split(',')))
+
+        return JsonResponse({
+            'reserved_seats': reserved_seats,
+            'occupied_seats': occupied_seats,
+        })
+
+    except Booking.DoesNotExist:
+        return JsonResponse({"error": "Booking not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+def UpdateBookingSeatsView(request, booking_id):
+    try:
+        # Fetch the booking
+        booking = get_object_or_404(Booking, id=booking_id)
+
+        # Assuming the data is sent as JSON in the PATCH request
+        data = request.data  # or request.body if you're using raw data
+
+        reserved_seats = data.get('reserved_seats')
+        
+        if reserved_seats is not None:
+            # Update the reserved seats field
+            booking.reserved_seats = reserved_seats
+            booking.save()
+
+        return JsonResponse({'message': 'Booking updated successfully'}, status=200)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def ReservedSeatsView(request, booking_id):
+    try:
+        # Retrieve the booking object using booking_id
+        booking = get_object_or_404(Booking, id=booking_id)
+        
+        # Get the schedule_id and other booking details
+        schedule_id = booking.schedule.id
+        booking_date = booking.booking_date
+        departure_stop = booking.departure_stop
+        arrival_stop = booking.arrival_stop
+
+        # Get the schedule object associated with the booking
+        schedule = get_object_or_404(Schedule, id=schedule_id)
+        stops = schedule.stops.split(',')  # Assuming stops are stored as comma-separated values
+
+        # Retrieve the reservations that overlap with this booking's departure and arrival stops
+        existing_reservations = Reservation.objects.filter(
+            schedule_id=schedule_id,
+            booking_date=booking_date,
+            status__in=['paid', 'started']  # Only considering 'paid' or 'started' reservations
+        )
+
+        # Filter the reservations based on whether their departure and arrival stops overlap
+        filtered_reservations = []
+        for reservation in existing_reservations:
+            departure_index = stops.index(reservation.departure_stop)
+            arrival_index = stops.index(reservation.arrival_stop)
+
+            current_departure_index = stops.index(departure_stop)
+            current_arrival_index = stops.index(arrival_stop)
+
+            # Check for overlapping reservation (whether the stop ranges intersect)
+            if not (current_departure_index >= arrival_index or current_arrival_index <= departure_index):
+                filtered_reservations.append(reservation)
+
+        # Extract reserved seats for the filtered reservations
+        reserved_seats = []
+        for reservation in filtered_reservations:
+            reserved_seats += reservation.reserved_seats.split(',')  # Assuming reserved_seats is a comma-separated string
+
+        # Remove duplicate seats from the list
+        blocked_seats = list(set(reserved_seats))
+
+        # Return the result including the blocked seats
+        return JsonResponse({
+            'schedule_id': schedule_id,
+            'booking_date': booking_date,
+            'reserved_seats': blocked_seats,  # List of blocked/reserved seats
+        })
+
+    except Booking.DoesNotExist:
+        return JsonResponse({'message': 'Booking details not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 @csrf_exempt
 def ContactUsView(request):

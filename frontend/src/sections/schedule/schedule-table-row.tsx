@@ -4,10 +4,13 @@ import TableCell from '@mui/material/TableCell';
 
 import { LoadingButton } from '@mui/lab';
 
+import axiosInstance from 'src/api/axios-instance';
+
 // ----------------------------------------------------------------------
 
 export type ScheduleProps = {
   id: string;
+  user_id: string;
   bus_name: string;
   from: string;
   to: string;
@@ -23,8 +26,25 @@ type ScheduleTableRowProps = {
 };
 
 export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
-  const handleBookNow = () => {
-    window.location.href = `/seats`;
+  const handleBookNow = async () => {
+    // window.location.href = `/seats`;
+    try {
+      const response = await axiosInstance.post('/bookings/', {
+        schedule_id: row.id,
+        user_id: row.user_id,
+        booking_date: row.date,
+        departure_stop: row.from,
+        arrival_stop: row.to,
+        fare: row.fare,
+        reserved_seats: 'null',
+        departure_time: row.from_time,
+        arrival_time: row.to_time,
+      });
+
+      window.location.href = `/reservation/${response?.data?.booking_id}`;
+    } catch (error: any) {
+      console.error('Booking Error:', error);
+    }
   };
 
   return (

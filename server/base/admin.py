@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Bus,Schedule,Message,Booking
+from .models import Bus,Schedule,Message,Booking,Reservation
 
 # Register your models here.
 
@@ -23,7 +23,13 @@ class BookingAdmin(admin.ModelAdmin):
     list_display = ('id', 'schedule', 'user', 'amount', 'reserved_seats', 'departure_stop', 'departure_time', 'arrival_stop', 'arrival_time', 'booking_date', 'created_at', 'updated_at')
     list_filter = ('created_at', 'updated_at')
 
+class ReservationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'schedule', 'user', 'payment_id', 'departure_stop', 'departure_time', 'arrival_stop', 'arrival_time', 'reserved_seats', 'amount', 'status', 'qr_code', 'booking_date', 'created_at', 'updated_at')
+    search_fields = ('user__username', 'payment_id', 'departure_stop', 'arrival_stop', 'status') 
+    list_filter = ('status', 'created_at')  
+
 admin.site.register(Bus, BusAdmin)
 admin.site.register(Schedule, ScheduleAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Booking, BookingAdmin)
+admin.site.register(Reservation, ReservationAdmin)
