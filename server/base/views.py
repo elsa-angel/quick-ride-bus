@@ -255,6 +255,8 @@ def SearchScheduleView(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def BookingView(request):
+    # import rpdb; rpdb.set_trace()
+
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -334,6 +336,7 @@ def BookingDetailsView(request, booking_id):
         booking = Booking.objects.get(id=booking_id)
         response_data = {
             'booking_id': booking.id,
+            'user_id': booking.user.id,
             'schedule': {
                 'id': booking.schedule.id,
                 'bus': {
@@ -342,8 +345,13 @@ def BookingDetailsView(request, booking_id):
                 },
                 # Add more details here if needed
             },
+            'departure_stop': booking.departure_stop,
+            'departure_time': booking.departure_time,
+            'arrival_stop': booking.arrival_stop,
+            'arrival_time': booking.arrival_time,
             'reserved_seats': booking.reserved_seats,
             'amount': booking.amount,
+            'booking_date': booking.booking_date,
         }
         return JsonResponse(response_data)
 

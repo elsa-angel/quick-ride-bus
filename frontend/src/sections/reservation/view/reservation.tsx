@@ -11,10 +11,10 @@ import axios from 'axios';
 
 // import SeatAvailabilityView from '../seat-availability';
 import { SeatAvailabilityView } from '../seat-availability';
-// import Payment from '../payment';
+import Payment from '../payment';
 
 export default function ReservationView() {
-  const { booking_id } = useParams(); // This will capture the booking ID from the URL
+  const { booking_id } = useParams();
   // const history = useHistory(); // To navigate to other routes if needed
 
   const [bookingData, setBookingData] = useState<any>(null);
@@ -23,21 +23,22 @@ export default function ReservationView() {
   // const [currentStep, setCurrentStep] = useState<number>(0);
   const [bookingId, setBookingId] = useState<number>(1); // Example booking ID
 
+  // Fetch booking details
+  const getBookingDetails = async () => {
+    try {
+      const response = await axiosInstance.get(`/bookings/${booking_id}`);
+      setBookingData(response.data);
+      setTotalSeats(response.data?.schedule?.bus?.num_seats);
+      setBookingLoading(false);
+    } catch (error) {
+      console.error('Error fetching booking details:', error);
+      setBookingLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (booking_id) {
-      // getBookingDetails();
-      // Fetch booking details
-      const getBookingDetails = async () => {
-        try {
-          const response = await axiosInstance.get(`/bookings/${booking_id}`);
-          setBookingData(response.data);
-          setTotalSeats(response.data?.schedule?.bus?.num_seats);
-          setBookingLoading(false);
-        } catch (error) {
-          console.error('Error fetching booking details:', error);
-          setBookingLoading(false);
-        }
-      };
+      getBookingDetails();
     }
   }, [booking_id]);
 
@@ -45,11 +46,6 @@ export default function ReservationView() {
   const [currentStep, setCurrentStep] = useState(1);
 
   const updateCurrentStep = (step: number) => {
-    setCurrentStep(step);
-  };
-
-  // Function to handle step change
-  const handleStepChange = (step: number) => {
     setCurrentStep(step);
   };
 
@@ -81,13 +77,9 @@ export default function ReservationView() {
         )}
 
         {/* Step 2: Payment */}
-        {/* {currentStep === 2 && !isBookingLoading && (
-          <Payment
-            bookingId={booking_id}
-            updateCurrentStep={updateCurrentStep}
-            // Pass any other necessary props to the Payment component
-          />
-        )} */}
+        {currentStep === 2 && !isBookingLoading && (
+          <Payment bookingId={bookingIdAsNumber} updateCurrentStep={updateCurrentStep} />
+        )}
       </Box>
     </DashboardContent>
   );
