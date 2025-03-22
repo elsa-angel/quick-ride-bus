@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axiosInstance from 'src/api/axios-instance';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -13,12 +14,34 @@ import { Scrollbar } from 'src/components/scrollbar';
 
 import { BookingsTableRow } from '../bookings-table-row';
 import { BookingsTableHead } from '../bookings-table-head';
+
 // import { TableEmptyRows } from '../table-empty-rows';
 
 // ----------------------------------------------------------------------
 
 export function BookingsView() {
   const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axiosInstance.get(`/reservationlist/`);
+        console.log('Bookings:', response.data);
+        setBookings(response.data);
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+    };
+
+    // Fetch bookings initially
+    fetchBookings();
+
+    // Set up interval to fetch bookings every minute
+    const intervalId = setInterval(fetchBookings, 30000); // 60000 ms = 1 minute
+
+    // Cleanup function to clear the interval
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <DashboardContent>
@@ -35,6 +58,7 @@ export function BookingsView() {
             <Table sx={{ minWidth: 800 }}>
               <BookingsTableHead
                 headLabel={[
+                  { id: 'booking_id', label: 'Booking ID' },
                   { id: 'bus_name', label: 'Bus Name' },
                   { id: 'from', label: 'Departure' },
                   { id: 'to', label: 'Arrival' },

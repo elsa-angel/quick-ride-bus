@@ -490,6 +490,43 @@ def ReservedSeatsView(request, booking_id):
         return JsonResponse({'message': 'Booking details not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+    
+@login_required
+def ReservationListView(request):
+    if request.method == 'GET':
+        try:
+            # Fetch the reservations for the authenticated user
+            user = request.user  # Assuming you're using Django's built-in User model for authentication
+            reservations = Reservation.objects.filter(user=user)  # Filter reservations by user
+
+            # Prepare the response data
+            reservation_data = []
+
+            for reservation in reservations:
+                reservation_data.append({
+                    'id': reservation.id,
+                    'schedule_id': reservation.schedule.id,
+                    'user_id': reservation.user.id,
+                    'payment_id': reservation.payment_id,
+                    'departure_stop': reservation.departure_stop,
+                    'departure_time': reservation.departure_time,
+                    'arrival_stop': reservation.arrival_stop,
+                    'arrival_time': reservation.arrival_time,
+                    'reserved_seats': reservation.reserved_seats,
+                    'amount': reservation.amount,
+                    'status': reservation.status,
+                    'qr_code': reservation.qr_code,
+                    'booking_date': reservation.booking_date,
+                    'created_at': reservation.created_at,
+                    'updated_at': reservation.updated_at,
+                })
+
+            return JsonResponse({'reservations': reservation_data}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
 
 @csrf_exempt
 def ContactUsView(request):

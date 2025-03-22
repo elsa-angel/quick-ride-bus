@@ -4,7 +4,9 @@ import TableCell from '@mui/material/TableCell';
 
 import { LoadingButton } from '@mui/lab';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+import axiosInstance from 'src/api/axios-instance';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +27,7 @@ type BookingsTableRowProps = {
 };
 
 export function BookingsTableRow({ row }: BookingsTableRowProps) {
+  const [bookings, setBookings] = useState<any[]>([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [selectedResIndex, setSelectedResIndex] = useState(-1);

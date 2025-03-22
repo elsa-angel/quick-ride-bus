@@ -14,5 +14,6 @@ urlpatterns = [
     path('bookingsupdate/<int:booking_id>/', views.UpdateBookingSeatsView, name='update_booking_seats'),
     path('reservations/', views.ReservationView, name='reservation'),
     path('reserved_seats/<int:booking_id>/', views.ReservedSeatsView, name='reserved_seats'),
+    path('reservationlist/', views.ReservationListView, name='reservation_list'),
     path('contact/', views.ContactUsView, name='contact-us'),
 ]
