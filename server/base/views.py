@@ -16,7 +16,7 @@ from django.middleware.csrf import get_token
 
 from django.views.decorators.csrf import csrf_protect,csrf_exempt
 import json
-from .models import Schedule,Booking,Message
+from .models import Schedule,Booking,Message,Reservation
 from datetime import datetime
 
 @csrf_protect
@@ -297,41 +297,10 @@ def BookingView(request):
     
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-# def BookingDetailsView(request, booking_id):
-#     try:
-#         # Fetch the booking by its ID
-#         booking = Booking.objects.get(id=booking_id)
-        
-#         # Get related schedule data
-#         schedule = booking.schedule
-        
-#         # Prepare the response data
-#         booking_data = {
-#             'booking_id': booking.id,
-#             'schedule_id': schedule.id,
-#             'user_id': booking.user.id,
-#             'amount': booking.amount,
-#             'reserved_seats': booking.reserved_seats,
-#             'departure_stop': booking.departure_stop,
-#             'departure_time': booking.departure_time,
-#             'arrival_stop': booking.arrival_stop,
-#             'arrival_time': booking.arrival_time,
-#             'booking_date': booking.booking_date,
-#             'created_at': booking.created_at,
-#             'updated_at': booking.updated_at,
-#             'bus_name': schedule.bus.bus_name,  # assuming schedule has a bus related to it
-#             'bus_num_seats': schedule.bus.num_seats  # assuming bus has num_seats field
-#         }
-
-#         return JsonResponse(booking_data, status=200)
-
-#     except Booking.DoesNotExist:
-#         return JsonResponse({"error": "Booking not found."}, status=404)
-    
-#     except Exception as e:
-#         return JsonResponse({"error": str(e)}, status=500)
 
 def BookingDetailsView(request, booking_id):
+    # import rpdb; rpdb.set_trace()
+
     try:
         booking = Booking.objects.get(id=booking_id)
         response_data = {
@@ -358,27 +327,6 @@ def BookingDetailsView(request, booking_id):
     except Booking.DoesNotExist:
         return JsonResponse({"error": "Booking not found"}, status=404)
     
-# def SeatAvailabilityView(request, booking_id):
-#     try:
-#         # Get the booking object
-#         booking = get_object_or_404(Booking, id=booking_id)
-#         schedule = booking.schedule
-        
-#         # Assuming reserved_seats is a comma-separated string of selected seats in the booking
-#         reserved_seats = booking.reserved_seats.split(',') if booking.reserved_seats else []
-        
-#         # Assuming occupied_seats are stored in the schedule or similar model
-#         occupied_seats = schedule.occupied_seats.split(',') if schedule.occupied_seats else []
-
-#         return JsonResponse({
-#             'reserved_seats': reserved_seats,
-#             'occupied_seats': occupied_seats,
-#         })
-
-#     except Booking.DoesNotExist:
-#         return JsonResponse({"error": "Booking not found"}, status=404)
-#     except Exception as e:
-#         return JsonResponse({"error": str(e)}, status=400)
 
 def SeatAvailabilityView(request, booking_id):
     try:
@@ -410,16 +358,17 @@ def SeatAvailabilityView(request, booking_id):
 
 def UpdateBookingSeatsView(request, booking_id):
     try:
-        # Fetch the booking
+        # Parse the JSON data from request.body
+        data = json.loads(request.body)
+        
+        # Fetch the booking object
         booking = get_object_or_404(Booking, id=booking_id)
 
-        # Assuming the data is sent as JSON in the PATCH request
-        data = request.data  # or request.body if you're using raw data
-
+        # Get the reserved seats from the parsed data
         reserved_seats = data.get('reserved_seats')
         
         if reserved_seats is not None:
-            # Update the reserved seats field
+            # Update the reserved_seats field on the booking
             booking.reserved_seats = reserved_seats
             booking.save()
 
@@ -427,6 +376,65 @@ def UpdateBookingSeatsView(request, booking_id):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+def ReservationView(request):
+    import rpdb; rpdb.set_trace()
+
+    if request.method == 'POST':
+        try:
+            # Load data from the request body
+            data = json.loads(request.body)
+            
+            # Extract relevant fields from the data
+            schedule_id = data['schedule_id']
+            user_id = data['user_id']
+            payment_id = data['payment_id']
+            amount = data['amount']
+            status = data['status']
+            departure_stop = data['departure_stop']
+            departure_time = data['departure_time']
+            arrival_stop = data['arrival_stop']
+            arrival_time = data['arrival_time']
+            reserved_seats = data['reserved_seats']
+            booking_date = data['booking_date']
+            qr_code = data.get('qr_code', 'null') 
+
+            # Fetch the related schedule and user
+            schedule = Schedule.objects.get(id=schedule_id)
+            user = User.objects.get(id=user_id)
+
+            # Create a new Reservation object
+            reservation = Reservation.objects.create(
+                schedule=schedule,
+                user=user,
+                payment_id=payment_id,
+                amount=amount,
+                status=status,
+                departure_stop=departure_stop,
+                departure_time=departure_time,
+                arrival_stop=arrival_stop,
+                arrival_time=arrival_time,
+                reserved_seats=reserved_seats,
+                booking_date=booking_date,
+                qr_code=qr_code
+            )
+            
+            # Return a success response with the reservation ID
+            return JsonResponse({
+                'reservation_id': reservation.id,
+                'message': 'Reservation created successfully',
+            }, status=201)
+
+        except Schedule.DoesNotExist:
+            return JsonResponse({"error": "Schedule not found"}, status=404)
+        except User.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
+        except KeyError as e:
+            return JsonResponse({"error": f"Missing required field: {str(e)}"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def ReservedSeatsView(request, booking_id):
     try:

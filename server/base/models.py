@@ -44,7 +44,7 @@ class Booking(models.Model):
         on_delete=models.CASCADE,
     )
     amount = models.CharField(max_length=255) 
-    reserved_seats = models.CharField(max_length=255)  
+    reserved_seats = models.TextField()  
     departure_stop = models.CharField(max_length=255) 
     departure_time = models.CharField(max_length=255)  
     arrival_stop = models.CharField(max_length=255)  
