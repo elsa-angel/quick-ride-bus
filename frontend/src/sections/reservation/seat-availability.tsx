@@ -32,20 +32,33 @@ export function SeatAvailabilityView({
     selected: boolean;
   }
 
-  const rows = Math.ceil(totalSeats / 4); // Assuming 4 seats per row
+  const rows = Math.ceil(totalSeats / 4);
 
   const [seats, setSeats] = useState<ISeat[]>([]);
   const [reservedSeats, setReservedSeats] = useState<string[]>([]);
   const [occupiedSeats, setOccupiedSeats] = useState<string[]>([]);
 
+  useEffect(() => {
+    const fetchReservedSeats = async () => {
+      try {
+        const response = await axiosInstance.get(`/reserved_seats/${bookingId}/`);
+        setOccupiedSeats(response?.data?.reserved_seats);
+
+        const booking = await axiosInstance.get(`/bookings/${bookingId}/`);
+        setReservedSeats(booking?.data?.reserved_seats);
+      } catch (error) {
+        console.error('Error fetching reserved seats:', error);
+      }
+    };
+
+    fetchReservedSeats();
+  }, [bookingId]);
+
   const seatLayout = useCallback((): ISeat[] => {
-    const columns = ['A', 'B', 'C', 'D'];
-
-    const isSeatOccupied = (seat: string): boolean => occupiedSeats?.includes(seat);
-
     const layout: ISeat[] = [];
+    const isSeatOccupied = (seat: string): boolean => occupiedSeats?.includes(seat);
     Array.from({ length: rows }, (_, rowIndex) =>
-      columns.forEach((column) => {
+      ['A', 'B', 'C', 'D'].forEach((column) => {
         const seatId = `${rowIndex + 1}${column}`;
         layout.push({
           id: seatId,
@@ -75,32 +88,17 @@ export function SeatAvailabilityView({
       .join(',');
 
     try {
-      await axiosInstance.patch(`/bookings/${bookingId}/`, {
+      await axiosInstance.patch(`/bookingsupdate/${bookingId}/`, {
         reserved_seats: selectedSeats,
         // amount: numOfSeatsSelected * fare,
       });
+      console.log('Selected Seats: ', selectedSeats);
       updateCurrentStep(2);
       console.log('Booking Updated Successfully');
     } catch (error) {
       console.error('Error updating booking:', error);
     }
   };
-
-  useEffect(() => {
-    const fetchReservedSeats = async () => {
-      try {
-        const response = await axiosInstance.get(`/reserved_seats/${bookingId}/`);
-        setOccupiedSeats(response?.data?.reserved_seats);
-
-        const booking = await axiosInstance.get(`/bookings/${bookingId}/`);
-        setReservedSeats(booking?.data?.reserved_seats);
-      } catch (error) {
-        console.error('Error fetching reserved seats:', error);
-      }
-    };
-
-    fetchReservedSeats();
-  }, [bookingId]);
 
   useEffect(() => {
     const layout = seatLayout();

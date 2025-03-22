@@ -15,6 +15,8 @@ export const SchedulePage = lazy(() => import('src/pages/schedule'));
 export const ContactUsPage = lazy(() => import('src/pages/contact'));
 export const MyBookingsPage = lazy(() => import('src/pages/bookings'));
 export const ReservationPage = lazy(() => import('src/pages/reservations'));
+export const ReservationSuccessPage = lazy(() => import('src/pages/reservation-success'));
+export const ReservationFailedPage = lazy(() => import('src/pages/reservation-failed'));
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
@@ -52,6 +54,8 @@ export function Router() {
         { path: 'Contact', element: <ContactUsPage /> },
         { path: 'Bookings', element: <MyBookingsPage /> },
         { path: '/reservation/:booking_id', element: <ReservationPage /> },
+        { path: '/reservation_success/:booking_id', element: <ReservationSuccessPage /> },
+        { path: '/reservation_failed/:booking_id', element: <ReservationFailedPage /> },
       ],
     },
     {

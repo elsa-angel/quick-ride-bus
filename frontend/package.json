@@ -32,6 +32,7 @@
     "@iconify/react": "^5.0.2",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.7",
+    "@stripe/stripe-js": "^6.1.0",
     "apexcharts": "^3.52.0",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
@@ -42,7 +43,8 @@
     "react-helmet-async": "^2.0.5",
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.26.1",
-    "simplebar-react": "^3.2.6"
+    "simplebar-react": "^3.2.6",
+    "stripe": "^17.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.5.0",

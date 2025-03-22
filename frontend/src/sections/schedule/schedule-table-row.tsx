@@ -6,6 +6,8 @@ import { LoadingButton } from '@mui/lab';
 
 import axiosInstance from 'src/api/axios-instance';
 
+import { useRouter, usePathname } from 'src/routes/hooks';
+
 // ----------------------------------------------------------------------
 
 export type ScheduleProps = {
@@ -26,8 +28,9 @@ type ScheduleTableRowProps = {
 };
 
 export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
+  const router = useRouter();
+
   const handleBookNow = async () => {
-    // window.location.href = `/seats`;
     try {
       const response = await axiosInstance.post('/bookings/', {
         schedule_id: row.id,
@@ -41,7 +44,8 @@ export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
         arrival_time: row.to_time,
       });
 
-      window.location.href = `/reservation/${response?.data?.booking_id}`;
+      // window.location.href = `/reservation/${response?.data?.booking_id}`;
+      router.push(`/reservation/${response?.data?.booking_id}`);
     } catch (error: any) {
       console.error('Booking Error:', error);
     }

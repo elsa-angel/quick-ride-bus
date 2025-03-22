@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button, Grid, LinearProgress } from '@mui/material';
-import axios from 'axios';
 import axiosInstance from 'src/api/axios-instance';
-import { log } from 'console';
+import { loadStripe } from '@stripe/stripe-js';
+import Stripe from 'stripe';
 
 interface BookingDetailsProps {
   bookingId: number;
@@ -13,17 +13,17 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
   const [bookingData, setBookingData] = useState<any>(null);
   const [progress, setProgress] = useState(100);
 
-  const getBookingDetails = async () => {
-    try {
-      const response = await axiosInstance.get(`/bookings/${bookingId}`);
-      console.log('Booking Data:', response.data);
-      setBookingData(response.data);
-    } catch (error) {
-      console.error('Error occurred', error);
-    }
-  };
-
   useEffect(() => {
+    const getBookingDetails = async () => {
+      try {
+        const response = await axiosInstance.get(`/bookings/${bookingId}`);
+        console.log('Booking Data:', response.data);
+        setBookingData(response.data);
+      } catch (error) {
+        console.error('Error occurred', error);
+      }
+    };
+
     getBookingDetails();
   }, [bookingId]);
 
@@ -42,6 +42,62 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
     ? BOOKING?.reserved_seats.split(',').length
     : 0;
   const totalAmount = amount * num_reserved_seats;
+
+  console.log('Booking ID:', BOOKING?.booking_id);
+
+  const makePayment = async () => {
+    updateProgress(30);
+    const stripe = await loadStripe(
+      'pk_test_51Q3wbuIMqVOQVQ5ADpdbpZYftHwMsC4gnTkN21xgQp6CgExTuxvhvXNv85xjLnaElL8rVrokgWeiRGpeFRc6QgWP00x0FwRJx6'
+    );
+
+    updateProgress(70);
+    const session = await makeStripePayment();
+    updateProgress(100);
+    stripe?.redirectToCheckout({
+      sessionId: session.id,
+    });
+  };
+
+  async function makeStripePayment() {
+    // const stripe = require('stripe')(
+    //   'sk_test_51Q3wbuIMqVOQVQ5AbRLzJrBynzDiHtpcVrieYFPfImc4kgw8BYkimtnILsPzV4aEv2jI5zGhJUduy7CyEaZVHrJY00Jcgc7EXC'
+    // )
+
+    const stripe = new Stripe(
+      'sk_test_51Q3wbuIMqVOQVQ5AbRLzJrBynzDiHtpcVrieYFPfImc4kgw8BYkimtnILsPzV4aEv2jI5zGhJUduy7CyEaZVHrJY00Jcgc7EXC'
+    );
+
+    const transaction = await stripe.products.create({
+      name: 'Transaction A',
+      // default_price_data: {
+      //   unit_amount: 20000,
+      //   currency: 'inr'
+      // },
+      // expand: ['default_price']
+    });
+
+    const price = await stripe.prices.create({
+      product: transaction.id,
+      unit_amount: totalAmount * 100,
+      currency: 'inr',
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      line_items: [{ price: price.id, quantity: 1 }],
+      mode: 'payment',
+      success_url: `http://192.168.1.6:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://192.168.1.6:3039/reservation_failed/${BOOKING.booking_id}`,
+    });
+    return session;
+  }
+
+  // loading bar
+
+  const updateProgress = (newProgress: number) => {
+    setProgress(newProgress);
+    // loadingBar.current.continuousStart();
+  };
 
   return (
     <Box
@@ -118,7 +174,7 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
         <Button variant="outlined" sx={{ mr: 2 }} onClick={() => updateCurrentStep(1)}>
           Go Back
         </Button>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" onClick={makePayment}>
           Pay Now
         </Button>
       </Box>

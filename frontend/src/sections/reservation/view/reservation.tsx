@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { LoadingButton } from '@mui/lab';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import axiosInstance from 'src/api/axios-instance';
 
-import axios from 'axios';
-
-// import SeatAvailabilityView from '../seat-availability';
 import { SeatAvailabilityView } from '../seat-availability';
 import Payment from '../payment';
 
@@ -23,20 +20,19 @@ export default function ReservationView() {
   // const [currentStep, setCurrentStep] = useState<number>(0);
   const [bookingId, setBookingId] = useState<number>(1); // Example booking ID
 
-  // Fetch booking details
-  const getBookingDetails = async () => {
-    try {
-      const response = await axiosInstance.get(`/bookings/${booking_id}`);
-      setBookingData(response.data);
-      setTotalSeats(response.data?.schedule?.bus?.num_seats);
-      setBookingLoading(false);
-    } catch (error) {
-      console.error('Error fetching booking details:', error);
-      setBookingLoading(false);
-    }
-  };
-
   useEffect(() => {
+    // Fetch booking details
+    const getBookingDetails = async () => {
+      try {
+        const response = await axiosInstance.get(`/bookings/${booking_id}`);
+        setBookingData(response.data);
+        setTotalSeats(response.data?.schedule?.bus?.num_seats);
+        setBookingLoading(false);
+      } catch (error) {
+        console.error('Error fetching booking details:', error);
+        setBookingLoading(false);
+      }
+    };
     if (booking_id) {
       getBookingDetails();
     }
