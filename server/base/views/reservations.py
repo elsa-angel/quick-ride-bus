@@ -19,7 +19,7 @@ def ReservationView(request):
                     'id': reservation.id,
                     'schedule_id': reservation.schedule.id,
                     "bus_name": reservation.schedule.bus.bus_name,
-                    'username': reservation.user.username,
+                    'username': reservation.user.first_name,
 
                     'user_id': reservation.user.id,
                     'payment_id': reservation.payment_id,

@@ -44,7 +44,7 @@ const Ticket: React.FC<TicketProps> = ({ user, reservation, onClose }) => (
             <div className="info">
               <div className="info-name">
                 Passenger
-                <h2>{user.name}</h2>
+                <h2>{(reservation as any)?.username}</h2>
               </div>
               <div className="info-seat">
                 Seat(s)

@@ -24,6 +24,7 @@ axiosInstance.interceptors.response.use(
     if (
       error.response &&
       !window.location.href.endsWith('/sign-in') &&
+      !window.location.href.endsWith('/register') &&
       error.response.status === 401
     ) {
       window.location.href = '/sign-in';
