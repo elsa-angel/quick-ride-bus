@@ -55,9 +55,7 @@ export default function ReservationView() {
   return (
     <DashboardContent>
       <Box display="flex" flexDirection="column" alignItems="flex-start" mb={5}>
-        <Typography variant="h4" mb={3}>
-          Reserve Your Tickets
-        </Typography>
+        <Typography variant="h4">Reserve Your Tickets</Typography>
       </Box>
 
       <Box>

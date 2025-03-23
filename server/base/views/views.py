@@ -7,16 +7,15 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.urls import reverse
-from .models import *
+from base.models import *
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from django.middleware.csrf import get_token
 
-
 from django.views.decorators.csrf import csrf_protect,csrf_exempt
 import json
-from .models import Schedule,Booking,Message,Reservation
+from base.models import Schedule,Booking,Message,Reservation
 from datetime import datetime
 
 @csrf_protect
@@ -299,8 +298,6 @@ def BookingView(request):
 
 
 def BookingDetailsView(request, booking_id):
-    # import rpdb; rpdb.set_trace()
-
     try:
         booking = Booking.objects.get(id=booking_id)
         response_data = {
@@ -333,9 +330,6 @@ def SeatAvailabilityView(request, booking_id):
         # Get the booking object
         booking = get_object_or_404(Booking, id=booking_id)
         schedule = booking.schedule
-        
-        # Assuming reserved_seats is a comma-separated string of selected seats in the booking
-        reserved_seats = booking.reserved_seats.split(',') if booking.reserved_seats else []
 
         # If occupied_seats are tracked by reservations, fetch them based on the schedule and booking date
         occupied_seats = Reservation.objects.filter(
@@ -347,7 +341,7 @@ def SeatAvailabilityView(request, booking_id):
         occupied_seats = list(set(seat for seats in occupied_seats for seat in seats.split(',')))
 
         return JsonResponse({
-            'reserved_seats': reserved_seats,
+            # 'reserved_seats': reserved_seats,
             'occupied_seats': occupied_seats,
         })
 
@@ -376,157 +370,6 @@ def UpdateBookingSeatsView(request, booking_id):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-    
-def ReservationView(request):
-    import rpdb; rpdb.set_trace()
-
-    if request.method == 'POST':
-        try:
-            # Load data from the request body
-            data = json.loads(request.body)
-            
-            # Extract relevant fields from the data
-            schedule_id = data['schedule_id']
-            user_id = data['user_id']
-            payment_id = data['payment_id']
-            amount = data['amount']
-            status = data['status']
-            departure_stop = data['departure_stop']
-            departure_time = data['departure_time']
-            arrival_stop = data['arrival_stop']
-            arrival_time = data['arrival_time']
-            reserved_seats = data['reserved_seats']
-            booking_date = data['booking_date']
-            qr_code = data.get('qr_code', 'null') 
-
-            # Fetch the related schedule and user
-            schedule = Schedule.objects.get(id=schedule_id)
-            user = User.objects.get(id=user_id)
-
-            # Create a new Reservation object
-            reservation = Reservation.objects.create(
-                schedule=schedule,
-                user=user,
-                payment_id=payment_id,
-                amount=amount,
-                status=status,
-                departure_stop=departure_stop,
-                departure_time=departure_time,
-                arrival_stop=arrival_stop,
-                arrival_time=arrival_time,
-                reserved_seats=reserved_seats,
-                booking_date=booking_date,
-                qr_code=qr_code
-            )
-            
-            # Return a success response with the reservation ID
-            return JsonResponse({
-                'reservation_id': reservation.id,
-                'message': 'Reservation created successfully',
-            }, status=201)
-
-        except Schedule.DoesNotExist:
-            return JsonResponse({"error": "Schedule not found"}, status=404)
-        except User.DoesNotExist:
-            return JsonResponse({"error": "User not found"}, status=404)
-        except KeyError as e:
-            return JsonResponse({"error": f"Missing required field: {str(e)}"}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
-    
-    return JsonResponse({"error": "Invalid request method"}, status=405)
-
-def ReservedSeatsView(request, booking_id):
-    try:
-        # Retrieve the booking object using booking_id
-        booking = get_object_or_404(Booking, id=booking_id)
-        
-        # Get the schedule_id and other booking details
-        schedule_id = booking.schedule.id
-        booking_date = booking.booking_date
-        departure_stop = booking.departure_stop
-        arrival_stop = booking.arrival_stop
-
-        # Get the schedule object associated with the booking
-        schedule = get_object_or_404(Schedule, id=schedule_id)
-        stops = schedule.stops.split(',')  # Assuming stops are stored as comma-separated values
-
-        # Retrieve the reservations that overlap with this booking's departure and arrival stops
-        existing_reservations = Reservation.objects.filter(
-            schedule_id=schedule_id,
-            booking_date=booking_date,
-            status__in=['paid', 'started']  # Only considering 'paid' or 'started' reservations
-        )
-
-        # Filter the reservations based on whether their departure and arrival stops overlap
-        filtered_reservations = []
-        for reservation in existing_reservations:
-            departure_index = stops.index(reservation.departure_stop)
-            arrival_index = stops.index(reservation.arrival_stop)
-
-            current_departure_index = stops.index(departure_stop)
-            current_arrival_index = stops.index(arrival_stop)
-
-            # Check for overlapping reservation (whether the stop ranges intersect)
-            if not (current_departure_index >= arrival_index or current_arrival_index <= departure_index):
-                filtered_reservations.append(reservation)
-
-        # Extract reserved seats for the filtered reservations
-        reserved_seats = []
-        for reservation in filtered_reservations:
-            reserved_seats += reservation.reserved_seats.split(',')  # Assuming reserved_seats is a comma-separated string
-
-        # Remove duplicate seats from the list
-        blocked_seats = list(set(reserved_seats))
-
-        # Return the result including the blocked seats
-        return JsonResponse({
-            'schedule_id': schedule_id,
-            'booking_date': booking_date,
-            'reserved_seats': blocked_seats,  # List of blocked/reserved seats
-        })
-
-    except Booking.DoesNotExist:
-        return JsonResponse({'message': 'Booking details not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
-    
-@login_required
-def ReservationListView(request):
-    if request.method == 'GET':
-        try:
-            # Fetch the reservations for the authenticated user
-            user = request.user  # Assuming you're using Django's built-in User model for authentication
-            reservations = Reservation.objects.filter(user=user)  # Filter reservations by user
-
-            # Prepare the response data
-            reservation_data = []
-
-            for reservation in reservations:
-                reservation_data.append({
-                    'id': reservation.id,
-                    'schedule_id': reservation.schedule.id,
-                    'user_id': reservation.user.id,
-                    'payment_id': reservation.payment_id,
-                    'departure_stop': reservation.departure_stop,
-                    'departure_time': reservation.departure_time,
-                    'arrival_stop': reservation.arrival_stop,
-                    'arrival_time': reservation.arrival_time,
-                    'reserved_seats': reservation.reserved_seats,
-                    'amount': reservation.amount,
-                    'status': reservation.status,
-                    'qr_code': reservation.qr_code,
-                    'booking_date': reservation.booking_date,
-                    'created_at': reservation.created_at,
-                    'updated_at': reservation.updated_at,
-                })
-
-            return JsonResponse({'reservations': reservation_data}, status=200)
-
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
-    else:
-        return JsonResponse({"error": "Invalid request method"}, status=405)
 
 @csrf_exempt
 def ContactUsView(request):

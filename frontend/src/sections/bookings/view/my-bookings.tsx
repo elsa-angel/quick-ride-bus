@@ -25,9 +25,9 @@ export function BookingsView() {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axiosInstance.get(`/reservationlist/`);
+        const response = await axiosInstance.get(`/reservations/`);
         console.log('Bookings:', response.data);
-        setBookings(response.data);
+        setBookings(response.data?.reservations);
       } catch (error) {
         console.error('Error fetching bookings:', error);
       }
@@ -71,11 +71,7 @@ export function BookingsView() {
                 ]}
               />
               <TableBody>
-                {bookings.map((row: any) => (
-                  <BookingsTableRow key={row.id} row={row} />
-                ))}
-
-                {/* <TableEmptyRows emptyRows={schedules?.length} height={68} /> */}
+                {bookings?.map((row: any) => <BookingsTableRow key={row.id} row={row} />)}
               </TableBody>
             </Table>
           </TableContainer>

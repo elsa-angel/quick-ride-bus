@@ -69,11 +69,10 @@ export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
           size="large"
           type="submit"
           color="primary"
-          variant="contained"
+          variant="outlined"
           onClick={handleBookNow}
-          sx={{ width: 265, height: '56px' }}
         >
-          Book Now
+          Book
         </LoadingButton>
       </TableCell>
     </TableRow>
