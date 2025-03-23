@@ -30,6 +30,7 @@
     "@fontsource-variable/dm-sans": "^5.0.7",
     "@fontsource/barlow": "^5.0.14",
     "@iconify/react": "^5.0.2",
+    "@mui/icons-material": "^6.4.8",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.7",
     "@stripe/stripe-js": "^6.1.0",
@@ -43,6 +44,7 @@
     "react-helmet-async": "^2.0.5",
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.26.1",
+    "react-top-loading-bar": "^3.0.2",
     "simplebar-react": "^3.2.6",
     "stripe": "^17.7.0"
   },

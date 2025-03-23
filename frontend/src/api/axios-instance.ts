@@ -2,7 +2,7 @@ import axios from 'axios';
 import getCookie from './get-cookie';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.6:8000',
+  baseURL: import.meta.env.VITE_SERVER_URL,
   timeout: 10000,
   withCredentials: true,
 });

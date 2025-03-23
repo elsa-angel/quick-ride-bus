@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, Grid, LinearProgress } from '@mui/material';
+import { Box, Typography, Button, Grid } from '@mui/material';
 import axiosInstance from 'src/api/axios-instance';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
+import { useLoadingBar } from 'react-top-loading-bar';
 
 interface BookingDetailsProps {
   bookingId: number;
@@ -11,7 +12,11 @@ interface BookingDetailsProps {
 
 const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }) => {
   const [bookingData, setBookingData] = useState<any>(null);
-  const [progress, setProgress] = useState(100);
+
+  const { start, complete } = useLoadingBar({
+    color: 'blue',
+    height: 2,
+  });
 
   useEffect(() => {
     const getBookingDetails = async () => {
@@ -46,14 +51,13 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
   console.log('Booking ID:', BOOKING?.booking_id);
 
   const makePayment = async () => {
-    updateProgress(30);
+    start();
     const stripe = await loadStripe(
       'pk_test_51Q3wbuIMqVOQVQ5ADpdbpZYftHwMsC4gnTkN21xgQp6CgExTuxvhvXNv85xjLnaElL8rVrokgWeiRGpeFRc6QgWP00x0FwRJx6'
     );
 
-    updateProgress(70);
     const session = await makeStripePayment();
-    updateProgress(100);
+    complete();
     stripe?.redirectToCheckout({
       sessionId: session.id,
     });
@@ -86,18 +90,11 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: price.id, quantity: 1 }],
       mode: 'payment',
-      success_url: `http://192.168.1.6:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://192.168.1.6:3039/reservation_failed/${BOOKING.booking_id}`,
+      success_url: `http://192.168.18.79:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://192.168.18.79:3039/reservation_failed/${BOOKING.booking_id}`,
     });
     return session;
   }
-
-  // loading bar
-
-  const updateProgress = (newProgress: number) => {
-    setProgress(newProgress);
-    // loadingBar.current.continuousStart();
-  };
 
   return (
     <Box

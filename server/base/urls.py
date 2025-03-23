@@ -1,5 +1,6 @@
 from django.urls import path # type: ignore
 from . import views
+from .views import *
 
 urlpatterns = [
     path('csrf-cookie/', views.csrf_cookie, name='csrf_cookie'),
@@ -12,8 +13,7 @@ urlpatterns = [
     path('bookings/<int:booking_id>/', views.BookingDetailsView, name='booking_details'),
     path('reserved_seats/<int:booking_id>/', views.SeatAvailabilityView, name='seat_availability'),
     path('bookingsupdate/<int:booking_id>/', views.UpdateBookingSeatsView, name='update_booking_seats'),
-    path('reservations/', views.ReservationView, name='reservation'),
-    path('reserved_seats/<int:booking_id>/', views.ReservedSeatsView, name='reserved_seats'),
-    path('reservationlist/', views.ReservationListView, name='reservation_list'),
+    path('reservations/', ReservationView, name='reservation'),
+    path('reserved_seats/<int:booking_id>/', ReservedSeatsView, name='reserved_seats'),
     path('contact/', views.ContactUsView, name='contact-us'),
 ]

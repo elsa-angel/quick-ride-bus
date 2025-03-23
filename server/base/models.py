@@ -62,7 +62,7 @@ class Booking(models.Model):
 class Reservation(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    payment_id = models.CharField(max_length=255)
+    payment_id = models.CharField(max_length=255, unique=True)
     departure_stop = models.CharField(max_length=255)
     departure_time = models.CharField(max_length=255)
     arrival_stop = models.CharField(max_length=255)

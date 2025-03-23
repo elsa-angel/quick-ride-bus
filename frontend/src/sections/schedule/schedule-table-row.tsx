@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab';
 
 import axiosInstance from 'src/api/axios-instance';
 
-import { useRouter, usePathname } from 'src/routes/hooks';
+import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -58,22 +58,29 @@ export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
       </TableCell>
       <TableCell>{row.from}</TableCell>
       <TableCell>{row.to}</TableCell>
-      <TableCell>{row.date}</TableCell>
+      {/* <TableCell>{row.date}</TableCell> */}
+      <TableCell>
+        {new Date(row.date).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })}
+      </TableCell>
+
       <TableCell>{row.from_time}</TableCell>
       <TableCell>{row.to_time}</TableCell>
       <TableCell>{row.time_difference}</TableCell>
-      <TableCell>{row.fare}</TableCell>
+      <TableCell>₹{row.fare}</TableCell>
       <TableCell>
         <LoadingButton
           fullWidth
           size="large"
           type="submit"
           color="primary"
-          variant="contained"
+          variant="outlined"
           onClick={handleBookNow}
-          sx={{ width: 265, height: '56px' }}
         >
-          Book Now
+          Book
         </LoadingButton>
       </TableCell>
     </TableRow>

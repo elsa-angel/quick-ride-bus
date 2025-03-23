@@ -18,7 +18,6 @@ export default function ReservationView() {
   const [isBookingLoading, setBookingLoading] = useState<boolean>(true);
   const [totalSeats, setTotalSeats] = useState<number>(0);
   // const [currentStep, setCurrentStep] = useState<number>(0);
-  const [bookingId, setBookingId] = useState<number>(1); // Example booking ID
 
   useEffect(() => {
     // Fetch booking details
@@ -55,9 +54,7 @@ export default function ReservationView() {
   return (
     <DashboardContent>
       <Box display="flex" flexDirection="column" alignItems="flex-start" mb={5}>
-        <Typography variant="h4" mb={3}>
-          Reserve Your Tickets
-        </Typography>
+        <Typography variant="h4">Reserve Your Tickets</Typography>
       </Box>
 
       <Box>

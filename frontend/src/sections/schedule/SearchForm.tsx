@@ -11,6 +11,13 @@ function SearchForm({ setSchedules }: any) {
     time: '09:00',
   });
 
+  // const [formData, setFormData] = useState({
+  //   from: '',
+  //   to: '',
+  //   date: '',
+  //   time: '',
+  // });
+
   const [errors, setErrors] = useState({
     from: '',
     to: '',
@@ -152,13 +159,11 @@ function SearchForm({ setSchedules }: any) {
       />
       &nbsp;
       <LoadingButton
-        fullWidth
-        size="large"
         type="submit"
         color="inherit"
         variant="contained"
         onClick={handleSubmit}
-        sx={{ width: 265, height: '56px' }}
+        sx={{ width: 120, height: '56px' }}
       >
         Search
       </LoadingButton>
