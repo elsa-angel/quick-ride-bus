@@ -27,15 +27,7 @@ class Schedule(models.Model):
     # def __str__(self):
     #     return self.name
 
-class Message(models.Model):
-    name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #     return self.name
 
 class Booking(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)  
@@ -78,3 +70,38 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"Reservation {self.id}"
+    
+class Ewallet(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE) 
+    balance = models.IntegerField() 
+
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    # def __str__(self):
+    #     return f"Ewallet for {self.user.username} with balance {self.balance}"
+    
+class Transaction(models.Model):
+    ewallet = models.ForeignKey('Ewallet', on_delete=models.CASCADE)
+    
+    type = models.CharField(max_length=1)  
+    title = models.CharField(max_length=255)  
+    amount = models.IntegerField()  
+    description = models.CharField(max_length=255)  
+    status = models.CharField(max_length=1)  
+
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True)  
+
+    def __str__(self):
+        return f"Transaction {self.id} - {self.title} - {self.status}"
+    
+class Message(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # def __str__(self):
+    #     return self.name
