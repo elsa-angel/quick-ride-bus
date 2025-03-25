@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required  
 from django.http import JsonResponse
-from base.models import Reservation,Schedule,User
+from base.models import Reservation,Schedule,User,Booking,Ewallet,Transaction
+from django.shortcuts import get_object_or_404
+from django.db import transaction as db_transaction
 
 import json
 
@@ -148,3 +150,100 @@ def ReservedSeatsView(request, booking_id):
         return JsonResponse({'message': 'Booking details not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+# def ReservedSeatsView(request, booking_id):
+#     try:
+#         # Retrieve the booking object using booking_id
+#         booking = get_object_or_404(Booking, id=booking_id)
+        
+#         # Get the schedule_id, booking_date, departure_stop, and arrival_stop from the booking
+#         schedule_id = booking.schedule.id
+#         booking_date = booking.booking_date
+#         departure_stop = booking.departure_stop
+#         arrival_stop = booking.arrival_stop
+
+#         # Retrieve the schedule object associated with the booking
+#         schedule = get_object_or_404(Schedule, id=schedule_id)
+#         stops = schedule.stops.split(',')  # Assuming stops are stored as comma-separated values
+
+#         # Retrieve the reservations that overlap with this booking's departure and arrival stops
+#         existing_reservations = Reservation.objects.filter(
+#             schedule_id=schedule_id,
+#             booking_date=booking_date,
+#             status__in=['paid', 'started']  # Only considering 'paid' or 'started' reservations
+#         )
+
+#         # Filter the reservations based on whether their departure and arrival stops overlap
+#         filtered_reservations = []
+#         for reservation in existing_reservations:
+#             departure_index = stops.index(reservation.departure_stop)
+#             arrival_index = stops.index(reservation.arrival_stop)
+
+#             current_departure_index = stops.index(departure_stop)
+#             current_arrival_index = stops.index(arrival_stop)
+
+#             # Check for overlapping reservation (whether the stop ranges intersect)
+#             if not (current_departure_index >= arrival_index or current_arrival_index <= departure_index):
+#                 filtered_reservations.append(reservation)
+
+#         # Extract reserved seats for the filtered reservations
+#         reserved_seats = []
+#         for reservation in filtered_reservations:
+#             reserved_seats += reservation.reserved_seats.split(',')  # Assuming reserved_seats is a comma-separated string
+
+#         # Extract seats already reserved by the booking itself (from the booking model)
+#         reserved_seats += booking.reserved_seats.split(',')
+
+#         # Remove duplicate seats from the list
+#         blocked_seats = list(set(reserved_seats))
+
+#         # Return the result including the blocked seats
+#         return JsonResponse({
+#             'schedule_id': schedule_id,
+#             'booking_date': booking_date,
+#             'reserved_seats': blocked_seats,  # List of blocked/reserved seats
+#         })
+
+#     except Booking.DoesNotExist:
+#         return JsonResponse({'message': 'Booking details not found'}, status=404)
+#     except Schedule.DoesNotExist:
+#         return JsonResponse({'message': 'Schedule not found'}, status=404)
+#     except Reservation.DoesNotExist:
+#         return JsonResponse({'message': 'Reservation not found'}, status=404)
+#     except Exception as e:
+#         return JsonResponse({'error': str(e)}, status=400)
+
+@login_required
+def ReservationCancel(request, reservation_id):
+    try:
+        with db_transaction.atomic():
+            reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+            
+            reservation.status = 'cancelled'
+            reservation.save()
+
+            ewallet, created = Ewallet.objects.get_or_create(user=request.user, defaults={'balance': 0})
+
+            amount_to_refund = int(reservation.amount)  
+
+            ewallet.balance += amount_to_refund
+            ewallet.save()
+
+            transaction = Transaction.objects.create(
+                ewallet=ewallet,
+                title=f"Refund for reservation ID {reservation.id}",
+                amount=amount_to_refund,  
+                type='C',  
+                description="Refund for cancelled booking.",
+                status='Success' 
+            )
+
+            
+            return JsonResponse({
+                'message': 'Reservation successfully cancelled and refund processed.',
+                'refund_amount': amount_to_refund  # Return the refund amount as an integer
+            }, status=200)
+
+    except Exception as e:
+        db_transaction.rollback()
+        return JsonResponse({"error": f"An error occurred while cancelling the reservation: {str(e)}"}, status=500)

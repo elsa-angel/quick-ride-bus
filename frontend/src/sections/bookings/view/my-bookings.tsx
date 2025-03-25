@@ -57,7 +57,7 @@ export function BookingsView() {
   const handleConfirmCancelBooking = async () => {
     if (bookingIdToCancel) {
       try {
-        await axiosInstance.delete(`/reservations/${bookingIdToCancel}`);
+        await axiosInstance.patch(`/reservations/cancel/${bookingIdToCancel}/`);
         setBookings(bookings.filter((booking) => booking.id !== bookingIdToCancel));
       } catch (error) {
         console.error('Error canceling booking:', error);
