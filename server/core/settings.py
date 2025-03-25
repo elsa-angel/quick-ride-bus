@@ -143,6 +143,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://192.168.1.6:3039',
     'http://192.168.18.79:3039',
     'http://localhost:3039',
+    'http://172.18.0.1:3039',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -150,5 +151,6 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3039',
     "http://192.168.1.6:3039",
-    "http://192.168.18.79:3039"
+    "http://192.168.18.79:3039",
+    'http://172.18.0.1:3039',
 ]
