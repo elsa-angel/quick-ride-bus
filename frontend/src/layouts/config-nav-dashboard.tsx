@@ -25,6 +25,11 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
+    title: 'Ewallets',
+    path: '/ewallet',
+    icon: icon('ic-user'),
+  },
+  {
     title: 'Contact Us',
     path: '/contact',
     icon: <PermContactCalendarIcon />,

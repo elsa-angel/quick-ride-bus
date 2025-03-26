@@ -16,5 +16,7 @@ urlpatterns = [
     path('reservations/', ReservationView, name='reservation'),
     path('reserved_seats/<int:booking_id>/', ReservedSeatsView, name='reserved_seats'),
     path('reservations/cancel/<int:reservation_id>/', ReservationCancel, name='cancel_reservation'), 
+    path('transactions/', TransactionsView, name='ewallet_transaction'),
+
     path('contact/', views.ContactUsView, name='contact-us'),
 ]

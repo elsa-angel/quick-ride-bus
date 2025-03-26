@@ -251,35 +251,69 @@ def ReservationCancel(request, reservation_id):
         db_transaction.rollback()
         return JsonResponse({"error": f"An error occurred while cancelling the reservation: {str(e)}"}, status=500)
     
-@api_view(['GET'])
+# @api_view(['GET'])
+# def TransactionsView(request):
+#     try:
+#         # Check if the user is authenticated
+#         if not request.user.is_authenticated:
+#             return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+#         # Get the currently authenticated user
+#         user = request.user
+
+#         # Retrieve the user's e-wallet
+#         ewallet = get_object_or_404(Ewallet, user=user)
+
+#         # Retrieve transactions associated with the user's e-wallet
+#         transactions = Transaction.objects.filter(ewallet=ewallet).order_by('-created_at')
+
+#         # Prepare the transaction data in a format suitable for the frontend
+#         transaction_data = []
+#         for transaction in transactions:
+#             transaction_data.append({
+#                 'title': transaction.title,
+#                 'vendor': transaction.description,  # Assuming the description contains the vendor info
+#                 'date': transaction.created_at.isoformat(),  # ISO formatted date
+#                 'amount': transaction.amount,
+#                 'currency': '₹',  # Assuming INR for simplicity
+#                 'action': transaction.type,
+#             })
+
+#         return Response(transaction_data)
+
+#     except Exception as e:
+#         return JsonResponse({'error': 'An error occurred: ' + str(e)}, status=500)
+
+@login_required
 def TransactionsView(request):
-    try:
-        # Check if the user is authenticated
-        if not request.user.is_authenticated:
-            return JsonResponse({'error': 'User not authenticated'}, status=401)
+    if request.method == 'GET':
+        try:
+            # Fetch the currently authenticated user
+            user = request.user
 
-        # Get the currently authenticated user
-        user = request.user
+            # Retrieve the user's e-wallet
+            ewallet = get_object_or_404(Ewallet, user=user)
 
-        # Retrieve the user's e-wallet
-        ewallet = get_object_or_404(Ewallet, user=user)
+            # Retrieve transactions associated with the e-wallet
+            transactions = Transaction.objects.filter(ewallet=ewallet).order_by('-created_at')
 
-        # Retrieve transactions associated with the user's e-wallet
-        transactions = Transaction.objects.filter(ewallet=ewallet).order_by('-created_at')
+            # Prepare the response data
+            transaction_data = []
 
-        # Prepare the transaction data in a format suitable for the frontend
-        transaction_data = []
-        for transaction in transactions:
-            transaction_data.append({
-                'title': transaction.title,
-                'vendor': transaction.description,  # Assuming the description contains the vendor info
-                'date': transaction.created_at.isoformat(),  # ISO formatted date
-                'amount': transaction.amount,
-                'currency': '₹',  # Assuming INR for simplicity
-                'action': transaction.type,
-            })
+            for transaction in transactions:
+                transaction_data.append({
+                    'title': transaction.title,
+                    'vendor': transaction.description,  # Assuming 'description' contains the vendor info
+                    'date': transaction.created_at.isoformat(),  # ISO formatted date
+                    'amount': transaction.amount,
+                    'currency': '₹',  # Assuming INR for simplicity
+                    'action': transaction.type,  # 'credit' or 'debit'
+                })
 
-        return Response(transaction_data)
+            # Return the transaction data as JSON
+            return JsonResponse({'transactions': transaction_data}, status=200)
 
-    except Exception as e:
-        return JsonResponse({'error': 'An error occurred: ' + str(e)}, status=500)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)

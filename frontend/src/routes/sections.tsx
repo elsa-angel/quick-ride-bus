@@ -17,6 +17,7 @@ export const MyBookingsPage = lazy(() => import('src/pages/bookings'));
 export const ReservationPage = lazy(() => import('src/pages/reservations'));
 export const ReservationSuccessPage = lazy(() => import('src/pages/reservation-success'));
 export const ReservationFailedPage = lazy(() => import('src/pages/reservation-failed'));
+export const EWalletPage = lazy(() => import('src/pages/e-wallet'));
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
@@ -56,6 +57,7 @@ export function Router() {
         { path: '/reservation/:booking_id', element: <ReservationPage /> },
         { path: '/reservation_success/:booking_id', element: <ReservationSuccessPage /> },
         { path: '/reservation_failed/:booking_id', element: <ReservationFailedPage /> },
+        { path: '/ewallet', element: <EWalletPage /> },
       ],
     },
     {
