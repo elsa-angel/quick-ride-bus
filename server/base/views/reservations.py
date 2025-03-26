@@ -244,7 +244,7 @@ def ReservationCancel(request, reservation_id):
             
             return JsonResponse({
                 'message': 'Reservation successfully cancelled and refund processed.',
-                'refund_amount': amount_to_refund  # Return the refund amount as an integer
+                'refund_amount': amount_to_refund  
             }, status=200)
 
     except Exception as e:
@@ -254,28 +254,23 @@ def ReservationCancel(request, reservation_id):
 @api_view(['GET'])
 def TransactionsView(request):
     try:
-        # Check if the user is authenticated
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'User not authenticated'}, status=401)
 
-        # Get the currently authenticated user
         user = request.user
 
-        # Retrieve the user's e-wallet
         ewallet = get_object_or_404(Ewallet, user=user)
 
-        # Retrieve transactions associated with the user's e-wallet
         transactions = Transaction.objects.filter(ewallet=ewallet).order_by('-created_at')
 
-        # Prepare the transaction data in a format suitable for the frontend
         transaction_data = []
         for transaction in transactions:
             transaction_data.append({
                 'title': transaction.title,
-                'vendor': transaction.description,  # Assuming the description contains the vendor info
-                'date': transaction.created_at.isoformat(),  # ISO formatted date
+                'vendor': transaction.description,  
+                'date': transaction.created_at.isoformat(),  
                 'amount': transaction.amount,
-                'currency': '₹',  # Assuming INR for simplicity
+                'currency': '₹',  
                 'action': transaction.type,
             })
 
