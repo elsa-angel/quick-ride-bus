@@ -29,17 +29,17 @@ export function EWallet() {
     fetchTransactions();
   }, []);
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
+  // const formatDate = (dateString: string): string => {
+  //   const date = new Date(dateString);
 
-    if (isNaN(date.getTime())) return 'Invalid Date'; // Check if date is invalid
+  //   if (isNaN(date.getTime())) return 'Invalid Date'; // Check if date is invalid
 
-    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits for day
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
-    const year = date.getFullYear();
+  //   const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits for day
+  //   const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
+  //   const year = date.getFullYear();
 
-    return `${day} ${month} ${year}`;
-  };
+  //   return `${day} ${month} ${year}`;
+  // };
 
   return (
     <DashboardContent>
@@ -72,8 +72,8 @@ export function EWallet() {
                     <h3 className="trans-name">{trans.title}</h3>{' '}
                     <h5 className="trans-type-date">
                       {}
-                      {/* {new Date(trans.created_at).toLocaleString()} */}
-                      {formatDate(trans.created_at)}
+                      {new Date(trans.created_at).toLocaleString()}
+                      {/* {formatDate(trans.created_at)} */}
                     </h5>{' '}
                   </div>{' '}
                   <div className="trans-amt">

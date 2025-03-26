@@ -45,7 +45,7 @@ export function BookingsView() {
     };
 
     fetchBookings();
-    const intervalId = setInterval(fetchBookings, 30000);
+    const intervalId = setInterval(fetchBookings, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
