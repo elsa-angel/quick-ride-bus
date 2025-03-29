@@ -8,6 +8,7 @@ urlpatterns = [
     path('login', views.LoginView, name='login'),
     path('logout', views.LogoutView, name='logout'),
     path('auth-check/',views.check_authentication,name="auth-check"),
+     path('auth/google/', GoogleLoginView, name='google-login'),
     path('schedule/', SearchScheduleView, name='schedule'),
     path('bookings/', views.BookingView, name='bookings'),
     path('bookings/<int:booking_id>/', views.BookingDetailsView, name='booking_details'),

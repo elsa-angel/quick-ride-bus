@@ -9,6 +9,8 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
@@ -81,6 +83,29 @@ export function SignInView() {
     }
   }, [router, data, errors, setAuthUser]);
 
+  const handleLoginSuccess = async (response: any) => {
+    try {
+      const { credential } = response;
+      const res = await axiosInstance.post(
+        '/auth/google/',
+        {
+          token: credential,
+        },
+        { withCredentials: true }
+      );
+
+      console.log('Login Success:', res.data);
+      setAuthUser(res?.data);
+      router.push('/');
+    } catch (error) {
+      console.error('Login Error:', error);
+    }
+  };
+
+  const handleLoginFailure = (response: any) => {
+    console.error('Login Failed:', response);
+  };
+
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
       <TextField
@@ -93,6 +118,11 @@ export function SignInView() {
         sx={{ mb: 3 }}
         error={!!errors.email}
         helperText={errors.email}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSignIn();
+          }
+        }}
       />
 
       <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
@@ -119,6 +149,11 @@ export function SignInView() {
         sx={{ mb: 3 }}
         error={!!errors.password}
         helperText={errors.password}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSignIn();
+          }
+        }}
       />
 
       <LoadingButton
@@ -158,9 +193,13 @@ export function SignInView() {
       </Divider>
 
       <Box gap={1} display="flex" justifyContent="center">
-        <IconButton color="inherit">
+        {/* <IconButton color="inherit">
           <Iconify icon="logos:google-icon" />
-        </IconButton>
+          "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"
+        </IconButton> */}
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <GoogleLogin onSuccess={handleLoginSuccess} />
+        </GoogleOAuthProvider>
       </Box>
     </>
   );

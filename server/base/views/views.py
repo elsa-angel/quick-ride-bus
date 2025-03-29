@@ -10,6 +10,9 @@ from django.urls import reverse
 from base.models import *
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+import requests
+from django.contrib.auth.backends import ModelBackend
 
 from django.middleware.csrf import get_token
 
@@ -17,6 +20,11 @@ from django.views.decorators.csrf import csrf_protect,csrf_exempt
 import json
 from base.models import Schedule,Booking,Message,Reservation
 from datetime import datetime
+
+
+GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
+
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/tokeninfo"
 
 @csrf_protect
 def csrf_cookie(request):
@@ -29,7 +37,7 @@ def check_authentication(request):
             "isAuthenticated": True,
             "user": {
                 "id": request.user.id,
-                "username": request.user.username,
+                "name": f"{request.user.first_name} {request.user.last_name}",
                 "email": request.user.email,
             },
             'csrftoken': csrf_token
@@ -140,6 +148,62 @@ def LogoutView(request):
             return JsonResponse({"error": "Logout Failed", "details": str(e)}, status=500)
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
+def verify_google_token(token):
+    try:
+        # Verify the Google token with Google's server
+        response = requests.get(f"{GOOGLE_TOKEN_URL}?id_token={token}")
+        if response.status_code != 200:
+            return None
+        return response.json()
+    except requests.RequestException:
+        return None
+
+@csrf_protect
+def GoogleLoginView(request):
+
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            token = data.get("token")
+
+            if not token:
+                return JsonResponse({"error": "Token is required"}, status=400)
+
+            # Verify the token using Google's API
+            google_data = verify_google_token(token)
+            if not google_data:
+                return JsonResponse({"error": "Invalid Google token"}, status=400)
+            
+            # import rpdb; rpdb.set_trace()
+
+            # Extract necessary fields from the Google data
+            email = google_data.get("email")
+            first_name = google_data.get("given_name", "")
+            last_name = google_data.get("family_name", "")  # Default empty string if not available
+
+            # Check if user exists, if not, create a new user
+            user, created = User.objects.get_or_create(
+                username=email, defaults={
+                    "first_name": first_name,
+                    "last_name": last_name, 
+                    "email": email,
+                }
+            )
+
+            # Authenticate user and log them in with the ModelBackend
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            return JsonResponse({
+                "isAuthenticated": True,
+                "user": {
+                    "id": user.id,
+                    "name": f"{user.first_name} {user.last_name}",
+                    "email": user.username,
+                }
+            }, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
 def BookingView(request):
