@@ -3,7 +3,6 @@ import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 
 import { Iconify } from 'src/components/iconify';
@@ -50,11 +49,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
           }}
           sx={header?.sx}
           slots={{
-            topArea: (
-              <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
-                This is an info Alert.
-              </Alert>
-            ),
+            topArea: null,
             leftArea: (
               <>
                 <MenuButton
@@ -76,16 +71,16 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                       href: '/',
                       icon: <Iconify width={22} icon="solar:home-angle-bold-duotone" />,
                     },
-                    {
-                      label: 'Profile',
-                      href: '#',
-                      icon: <Iconify width={22} icon="solar:shield-keyhole-bold-duotone" />,
-                    },
-                    {
-                      label: 'Settings',
-                      href: '#',
-                      icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
-                    },
+                    // {
+                    //   label: 'Profile',
+                    //   href: '#',
+                    //   icon: <Iconify width={22} icon="solar:shield-keyhole-bold-duotone" />,
+                    // },
+                    // {
+                    //   label: 'Settings',
+                    //   href: '#',
+                    //   icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
+                    // },
                   ]}
                 />
               </Box>

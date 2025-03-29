@@ -42,7 +42,7 @@ export function SeatAvailabilityView({
     const fetchReservedSeats = async () => {
       try {
         const response = await axiosInstance.get(`/reserved_seats/${bookingId}/`);
-        setOccupiedSeats(response?.data?.reserved_seats);
+        setOccupiedSeats(response?.data?.occupied_seats);
 
         const booking = await axiosInstance.get(`/bookings/${bookingId}/`);
         setReservedSeats(booking?.data?.reserved_seats);
@@ -106,10 +106,7 @@ export function SeatAvailabilityView({
   }, [reservedSeats, seatLayout]);
   return (
     <DashboardContent>
-      <Box display="flex" flexDirection="column" alignItems="flex-start" mb={5}>
-        <Typography variant="h4" mb={3}>
-          Seat Availability
-        </Typography>
+      <Box display="flex" flexDirection="column" alignItems="flex-start">
         <div className="bus">
           <Box display="flex" justifyContent="center" width="100%" mb={2}>
             <LoadingButton
@@ -126,12 +123,10 @@ export function SeatAvailabilityView({
             </LoadingButton>
           </Box>
           {numOfSeatsSelected > 0 && (
-            <span className="flex justify-center mb-2">
-              Total Amount : {fare * numOfSeatsSelected}
-            </span>
+            <Typography variant="subtitle1">Total Amount : {fare * numOfSeatsSelected}</Typography>
           )}
           <div className="front">
-            <h1>Please Select seats</h1>
+            <Typography variant="subtitle1">Please Select seats</Typography>
           </div>
           <div className="exit exit--front fuselage">.</div>
           <ol className="cabin fuselage">

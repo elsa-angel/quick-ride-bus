@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import QRCode from 'react-qr-code';
-import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
 import { DashboardContent } from 'src/layouts/dashboard';
 import '../reservation.css';
 import axiosInstance from 'src/api/axios-instance';
 
+const stripe = new Stripe(
+  'sk_test_51Q3wbuIMqVOQVQ5AbRLzJrBynzDiHtpcVrieYFPfImc4kgw8BYkimtnILsPzV4aEv2jI5zGhJUduy7CyEaZVHrJY00Jcgc7EXC'
+);
+
 const ReservationSuccessView: React.FC = () => {
   const location = useLocation();
-  //   const [stripeSession, setStripeSession] = useState<any>(null);
 
   // Function to get the query parameters
   const getQueryParams = () => {
@@ -21,9 +23,6 @@ const ReservationSuccessView: React.FC = () => {
   };
 
   const { sessionId } = getQueryParams();
-  const stripe = new Stripe(
-    'sk_test_51Q3wbuIMqVOQVQ5AbRLzJrBynzDiHtpcVrieYFPfImc4kgw8BYkimtnILsPzV4aEv2jI5zGhJUduy7CyEaZVHrJY00Jcgc7EXC'
-  );
 
   // Get Booking Data using booking_id
   const url = window.location.href;
@@ -33,11 +32,10 @@ const ReservationSuccessView: React.FC = () => {
 
   useEffect(() => {
     const makeReservation = async () => {
-      try {
-        // Fetch Stripe session data
-        const stripeSession = await stripe.checkout.sessions.retrieve(sessionId as string);
+      if (!sessionId || !bookingId) return;
 
-        // Fetch booking data
+      try {
+        const stripeSession = await stripe.checkout.sessions.retrieve(sessionId as string);
         const bookings = await axiosInstance.get(`/bookings/${bookingId}`);
 
         const amount = bookings.data.amount;
@@ -46,11 +44,6 @@ const ReservationSuccessView: React.FC = () => {
           : 0;
         const totalAmount = amount * num_reserved_seats;
 
-        console.log('Total Amount:', totalAmount);
-
-        console.log('Booking Data:', bookings.data);
-
-        // Prepare data for reservation
         const reservationData = {
           schedule_id: bookings?.data?.schedule?.id,
           user_id: bookings?.data?.user_id,
@@ -66,17 +59,14 @@ const ReservationSuccessView: React.FC = () => {
           booking_date: bookings?.data?.booking_date,
         };
 
-        // Make the reservation
-        // const response = await axiosInstance.post(`/reservations/${reservationData}`);
-        const response = await axiosInstance.post('/reservations/', reservationData);
-
-        console.log('Reservation successful:', response.data);
+        await axiosInstance.post('/reservations/', reservationData);
       } catch (error) {
         console.error('Error occurred:', error);
       }
     };
+
     makeReservation();
-  }, [sessionId, bookingId, stripe.checkout.sessions]);
+  }, [sessionId, bookingId]); // ✅ Only include necessary dependencies
 
   return (
     <DashboardContent>

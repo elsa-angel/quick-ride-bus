@@ -8,10 +8,10 @@ html {
 }
 .bus {
   margin: 20px auto;
-  max-width: 300px;
+  min-width: 300px;
 }
 .front {
-  height: 150px;
+  height: 80px;
   position: relative;
   overflow: hidden;
   text-align: center;

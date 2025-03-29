@@ -1,4 +1,5 @@
 /qrb
+cron.log
 
 # dependencies
 node_modules

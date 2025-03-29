@@ -1,4 +1,8 @@
 import { SvgColor } from 'src/components/svg-color';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import DepartureBoardIcon from '@mui/icons-material/DepartureBoard';
+import WalletIcon from '@mui/icons-material/Wallet';
 
 // ----------------------------------------------------------------------
 
@@ -15,22 +19,21 @@ export const navData = [
   {
     title: 'Schedule',
     path: '/schedule',
-    icon: icon('ic-user'),
+    icon: <EventNoteIcon />,
   },
   {
     title: 'My Bookings',
     path: '/bookings',
-    icon: icon('ic-user'),
+    icon: <DepartureBoardIcon />,
+  },
+  {
+    title: 'Ewallets',
+    path: '/ewallet',
+    icon: <WalletIcon />,
   },
   {
     title: 'Contact Us',
     path: '/contact',
-    icon: icon('ic-user'),
+    icon: <PermContactCalendarIcon />,
   },
-
-  // {
-  //   title: 'Not found',
-  //   path: '/404',
-  //   icon: icon('ic-disabled'),
-  // },
 ];
