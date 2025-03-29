@@ -33,6 +33,7 @@
     "@mui/icons-material": "^6.4.8",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.7",
+    "@react-oauth/google": "^0.12.1",
     "@stripe/stripe-js": "^6.1.0",
     "apexcharts": "^3.52.0",
     "axios": "^1.7.9",
