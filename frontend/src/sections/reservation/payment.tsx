@@ -90,8 +90,8 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: price.id, quantity: 1 }],
       mode: 'payment',
-      success_url: `http://192.168.1.6:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://192.168.1.6:3039/reservation_failed/${BOOKING.booking_id}`,
+      success_url: `http://localhost:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:3039/reservation_failed/${BOOKING.booking_id}`,
       // success_url: `http://172.18.0.1:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
       // cancel_url: `http://172.18.0.1:3039/reservation_failed/${BOOKING.booking_id}`,
     });

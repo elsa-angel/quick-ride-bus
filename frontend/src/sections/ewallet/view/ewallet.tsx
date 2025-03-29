@@ -5,8 +5,6 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import Grid from '@mui/material/Grid';
-import { Paper } from '@mui/material';
 import '../ewallet.css';
 
 export function EWallet() {
@@ -29,17 +27,17 @@ export function EWallet() {
     fetchTransactions();
   }, []);
 
-  // const formatDate = (dateString: string): string => {
-  //   const date = new Date(dateString);
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
 
-  //   if (isNaN(date.getTime())) return 'Invalid Date'; // Check if date is invalid
+    // if (isNaN(date.getTime())) return 'Invalid Date'; // Check if date is invalid
 
-  //   const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits for day
-  //   const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
-  //   const year = date.getFullYear();
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits for day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
+    const year = date.getFullYear();
 
-  //   return `${day} ${month} ${year}`;
-  // };
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <DashboardContent>
@@ -53,7 +51,7 @@ export function EWallet() {
         <div className="wallet">
           <aside className="left-wallet">
             <div className="wallet-head">
-              <h1>My Wallets</h1>
+              <h1>My Wallets</h1> <div className="modal-open">+</div>
             </div>
           </aside>
           <div className="right-trans">
@@ -72,8 +70,8 @@ export function EWallet() {
                     <h3 className="trans-name">{trans.title}</h3>{' '}
                     <h5 className="trans-type-date">
                       {}
-                      {new Date(trans.created_at).toLocaleString()}
-                      {/* {formatDate(trans.created_at)} */}
+                      {/* {new Date(trans.date).toLocaleString()} */}
+                      {formatDate(trans.date)}
                     </h5>{' '}
                   </div>{' '}
                   <div className="trans-amt">

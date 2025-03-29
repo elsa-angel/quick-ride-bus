@@ -1,6 +1,8 @@
 import { SvgColor } from 'src/components/svg-color';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import DepartureBoardIcon from '@mui/icons-material/DepartureBoard';
+import WalletIcon from '@mui/icons-material/Wallet';
 
 // ----------------------------------------------------------------------
 
@@ -22,12 +24,12 @@ export const navData = [
   {
     title: 'My Bookings',
     path: '/bookings',
-    icon: icon('ic-user'),
+    icon: <DepartureBoardIcon />,
   },
   {
     title: 'Ewallets',
     path: '/ewallet',
-    icon: icon('ic-user'),
+    icon: <WalletIcon />,
   },
   {
     title: 'Contact Us',

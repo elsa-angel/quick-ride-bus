@@ -272,6 +272,9 @@ def TransactionsView(request):
                 'amount': transaction.amount,
                 'currency': '₹',  
                 'action': transaction.type,
+                'ewallet': {
+                'balance': ewallet.balance,  
+            }
             })
 
         return Response(transaction_data)

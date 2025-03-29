@@ -68,6 +68,26 @@ h4 {
   color: #464646;
 }
 
+.modal-open {
+  display: inline-block;
+  float: right;
+  padding: 0;
+  font-size: 42px;
+  line-height: 36px;
+  color: #b7b7b7;
+  cursor: pointer;
+}
+
+.modal-open:hover {
+  display: inline-block;
+  float: right;
+  padding: 0;
+  font-size: 42px;
+  line-height: 36px;
+  color: #868686;
+  cursor: pointer;
+}
+
 .trans-list {
   display: none;
   border-top: 1px solid #f2f2f2;
