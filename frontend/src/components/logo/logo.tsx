@@ -199,7 +199,7 @@ export const Logo = forwardRef<HTMLDivElement, LogoProps>(
       <Box
         ref={ref}
         component={RouterLink}
-        href={href}
+        href={window.location.href.endsWith('/sign-in') ? '#' : href}
         className={logoClasses.root.concat(className ? ` ${className}` : '')}
         aria-label="Logo"
         sx={{
