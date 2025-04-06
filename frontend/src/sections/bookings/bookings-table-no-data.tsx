@@ -17,11 +17,11 @@ export function TableNoData({ searchQuery, ...other }: TableNoDataProps) {
       <TableCell align="center" colSpan={7}>
         <Box sx={{ py: 15, textAlign: 'center' }}>
           <Typography variant="h6" sx={{ mb: 1 }}>
-            No schedules available
+            No bookings available
           </Typography>
 
           <Typography variant="body2">
-            There are no bus schedules available at the moment.
+            There are no bus bookings available at the moment.
           </Typography>
         </Box>
       </TableCell>

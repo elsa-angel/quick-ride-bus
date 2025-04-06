@@ -13,7 +13,7 @@ h2 {
 .ticket {
   position: absolute;
   top: 550px;
-  left: 60%;
+  left: 58%;
   width: 340px;
   transform: translate(-50%, -50%);
   color: lighten(#666, 30%);
@@ -52,7 +52,7 @@ h2 {
     width: 16px;
     height: 16px;
     border-radius: 8px;
-    background-color: #f3f4f6;
+    background-color: #f9fafa;
   }
   &:before {
     right: 100%;

@@ -10,6 +10,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Scrollbar } from 'src/components/scrollbar';
 import { BookingsTableRow } from '../bookings-table-row';
 import { BookingsTableHead } from '../bookings-table-head';
+import { TableNoData } from '../bookings-table-no-data';
 import ConfirmDialogue from './confirmdialogue';
 import Ticket from './ticket';
 
@@ -38,7 +39,15 @@ export function BookingsView() {
       try {
         const response = await axiosInstance.get(`/reservations/`);
         console.log('Bookings:', response.data);
-        setBookings(response.data?.reservations);
+        // setBookings(response.data?.reservations);
+        const sortedBookings = response.data?.reservations.sort(
+          (a: BookingsProps, b: BookingsProps) => {
+            if (a.status < b.status) return 1; // 'paid' comes before 'unpaid' in descending order
+            if (a.status > b.status) return -1;
+            return 0;
+          }
+        );
+        setBookings(sortedBookings || []);
       } catch (error) {
         console.error('Error fetching bookings:', error);
       }
@@ -102,36 +111,45 @@ export function BookingsView() {
         />
       ) : (
         <Card>
-          <Scrollbar>
-            <TableContainer sx={{ overflow: 'unset' }}>
-              <Table sx={{ minWidth: 800 }}>
-                <BookingsTableHead
-                  headLabel={[
-                    { id: 'booking_id', label: 'Booking ID' },
-                    { id: 'bus_name', label: 'Bus Name' },
-                    { id: 'from', label: 'Departure' },
-                    { id: 'to', label: 'Arrival' },
-                    { id: 'date', label: 'Date' },
-                    { id: 'from_time', label: 'Departure Time' },
-                    { id: 'to_time', label: 'Arrival Time' },
-                    { id: 'fare', label: 'Amount' },
-                    { id: 'status', label: 'Status' },
-                    { id: '', label: 'Action' },
-                  ]}
-                />
-                <TableBody>
-                  {bookings?.map((row) => (
-                    <BookingsTableRow
-                      key={row.id}
-                      row={row}
-                      onCancel={handleCancelBooking}
-                      onView={handleViewBooking}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+          {bookings?.length ? (
+            <Scrollbar>
+              <TableContainer sx={{ overflow: 'unset' }}>
+                <Table sx={{ minWidth: 800 }}>
+                  <BookingsTableHead
+                    headLabel={[
+                      { id: 'booking_id', label: 'Booking ID' },
+                      { id: 'bus_name', label: 'Bus Name' },
+                      { id: 'from', label: 'Departure' },
+                      { id: 'to', label: 'Arrival' },
+                      { id: 'date', label: 'Date' },
+                      { id: 'from_time', label: 'Departure Time' },
+                      { id: 'to_time', label: 'Arrival Time' },
+                      { id: 'fare', label: 'Amount' },
+                      { id: 'status', label: 'Status' },
+                      { id: '', label: 'Action' },
+                    ]}
+                  />
+                  <TableBody>
+                    {bookings?.map((row) => (
+                      <BookingsTableRow
+                        key={row.id}
+                        row={row}
+                        onCancel={handleCancelBooking}
+                        onView={handleViewBooking}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+          ) : (
+            <Table>
+              <TableBody>
+                {/* Display the TableNoData component when schedules are empty */}
+                <TableNoData searchQuery="" />
+              </TableBody>
+            </Table>
+          )}
         </Card>
       )}
     </DashboardContent>

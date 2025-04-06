@@ -14,13 +14,32 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { ScheduleTableRow } from '../schedule-table-row';
 import { ScheduleTableHead } from '../schedule-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
+import { TableNoData } from '../table-no-data';
 
 import SearchForm from '../SearchForm';
 
 // ----------------------------------------------------------------------
+interface Schedule {
+  id: string;
+  user_id: string;
+  bus_name: string;
+  from: string;
+  to: string;
+  date: string;
+  from_time: string;
+  to_time: string;
+  time_difference: string;
+  fare: string;
+}
 
 export function ScheduleView() {
-  const [schedules, setSchedules] = useState([]);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const handleSearch = (newSchedules: any[], query: string) => {
+    setSchedules(newSchedules);
+    setSearchQuery(query);
+  };
 
   return (
     <DashboardContent>
@@ -31,7 +50,7 @@ export function ScheduleView() {
       </Box>
 
       <Card>
-        <SearchForm setSchedules={setSchedules} />
+        <SearchForm setSchedules={handleSearch} />
 
         {schedules?.length ? (
           <Scrollbar>
@@ -60,7 +79,17 @@ export function ScheduleView() {
               </Table>
             </TableContainer>
           </Scrollbar>
-        ) : null}
+        ) : (
+          // <Box sx={{ p: 3, textAlign: 'center' }}>
+          //   <Typography variant="h6">No schedule available</Typography>
+          // </Box>
+          <Table>
+            <TableBody>
+              {/* Display the TableNoData component when schedules are empty */}
+              <TableNoData searchQuery="" />
+            </TableBody>
+          </Table>
+        )}
       </Card>
     </DashboardContent>
   );

@@ -80,10 +80,16 @@ function SearchForm({ setSchedules }: any) {
       try {
         const response: any = await axiosInstance.post('/schedule/', { formData });
         console.log(response);
+        if (response?.data?.schedules && response.data.schedules.length > 0) {
+          setSchedules(response?.data?.schedules); // Set the schedules if available
+        } else {
+          setSchedules([]); // If no schedules found, set to an empty array
+        }
 
-        setSchedules(response?.data?.schedules);
+        // setSchedules(response?.data?.schedules);
       } catch (error) {
         console.error('Error :', error);
+        setSchedules([]);
       }
       // setProcessing(false);
     },

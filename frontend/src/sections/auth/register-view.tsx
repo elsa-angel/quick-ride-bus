@@ -203,7 +203,7 @@ export function RegisterView() {
 
       {renderForm}
 
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+      {/* <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
         <Typography
           variant="overline"
           sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
@@ -216,7 +216,7 @@ export function RegisterView() {
         <IconButton color="inherit">
           <Iconify icon="logos:google-icon" />
         </IconButton>
-      </Box>
+      </Box> */}
     </>
   );
 }
