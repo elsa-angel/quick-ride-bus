@@ -26,8 +26,20 @@ export function BookingsTableRow({ row, onCancel, onView }: BookingsTableRowProp
     <TableRow hover tabIndex={-1} role="checkbox">
       <TableCell>{row.id}</TableCell>
       <TableCell>{row.bus_name}</TableCell>
-      <TableCell>{row.departure_stop}</TableCell>
-      <TableCell>{row.arrival_stop}</TableCell>
+      <TableCell>
+        {row.departure_stop
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}
+      </TableCell>
+      <TableCell>
+        {row.arrival_stop
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}
+      </TableCell>
       <TableCell>{row.booking_date}</TableCell>
       <TableCell>{row.departure_time}</TableCell>
       <TableCell>{row.arrival_time}</TableCell>

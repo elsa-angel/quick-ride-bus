@@ -56,8 +56,20 @@ export function ScheduleTableRow({ row }: ScheduleTableRowProps) {
       <TableCell component="th" scope="row">
         {row.bus_name}
       </TableCell>
-      <TableCell>{row.from}</TableCell>
-      <TableCell>{row.to}</TableCell>
+      <TableCell>
+        {row.from
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}
+      </TableCell>
+      <TableCell>
+        {row.to
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}
+      </TableCell>
       {/* <TableCell>{row.date}</TableCell> */}
       <TableCell>
         {new Date(row.date).toLocaleDateString('en-GB', {

@@ -98,6 +98,15 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
     return session;
   }
 
+  const formatLocation = (location: string): string => {
+    if (!location) return '';
+    return location
+      .toLowerCase()
+      .split(' ')
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   return (
     <Box
       sx={{
@@ -133,13 +142,13 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
             <Typography variant="body1" fontWeight="bold">
               Departure:
             </Typography>
-            <Typography variant="body1">{from}</Typography>
+            <Typography variant="body1">{formatLocation(from)}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight="bold">
               Arrival:
             </Typography>
-            <Typography variant="body1">{to}</Typography>
+            <Typography variant="body1">{formatLocation(to)}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight="bold">
