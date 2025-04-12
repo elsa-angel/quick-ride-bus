@@ -278,31 +278,6 @@ def BookingDetailsView(request, booking_id):
         return JsonResponse({"error": "Booking not found"}, status=404)
     
 
-def SeatAvailabilityView(request, booking_id):
-    try:
-        # Get the booking object
-        booking = get_object_or_404(Booking, id=booking_id)
-        schedule = booking.schedule
-
-        # If occupied_seats are tracked by reservations, fetch them based on the schedule and booking date
-        occupied_seats = Reservation.objects.filter(
-            schedule=schedule,
-            status__in=['paid', 'started'],  # Add any relevant status you need
-        ).values_list('reserved_seats', flat=True)
-        
-        # Flatten the list of reserved seats and remove duplicates
-        occupied_seats = list(set(seat for seats in occupied_seats for seat in seats.split(',')))
-
-        return JsonResponse({
-            # 'reserved_seats': reserved_seats,
-            'occupied_seats': occupied_seats,
-        })
-
-    except Booking.DoesNotExist:
-        return JsonResponse({"error": "Booking not found"}, status=404)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400)
-
 def UpdateBookingSeatsView(request, booking_id):
     try:
         # Parse the JSON data from request.body

@@ -12,7 +12,6 @@ urlpatterns = [
     path('schedule/', SearchScheduleView, name='schedule'),
     path('bookings/', views.BookingView, name='bookings'),
     path('bookings/<int:booking_id>/', views.BookingDetailsView, name='booking_details'),
-    path('reserved_seats/<int:booking_id>/', views.SeatAvailabilityView, name='seat_availability'),
     path('bookingsupdate/<int:booking_id>/', views.UpdateBookingSeatsView, name='update_booking_seats'),
     path('reservations/', ReservationView, name='reservation'),
     path('reserved_seats/<int:booking_id>/', ReservedSeatsView, name='reserved_seats'),
