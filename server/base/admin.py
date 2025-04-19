@@ -9,8 +9,8 @@ class BusAdmin(admin.ModelAdmin):
     list_filter = ('created_at', 'updated_at')
 
 class ScheduleAdmin(admin.ModelAdmin):
-    list_display = ('bus', 'stops','stops_timings', 'stops_distance','running_days', 'created_at', 'updated_at')
-    search_fields = ('bus__bus_name', 'stops','stops_timings', 'stops_distance','running_days')
+    list_display = ('bus', 'stops','stops_timings', 'stops_distance','stops_coordinates','running_days', 'created_at', 'updated_at')
+    search_fields = ('bus__bus_name', 'stops','stops_timings', 'stops_distance','stops_coordinates','running_days')
     list_filter = ('created_at', 'updated_at')
 
 

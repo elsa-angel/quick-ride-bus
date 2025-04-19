@@ -20,6 +20,7 @@ class Schedule(models.Model):
     stops_timings = models.CharField(max_length=255)
     stops_distance = models.CharField(max_length=255)
     running_days = models.CharField(max_length=255)
+    stops_coordinates = models.CharField(max_length=255) 
     
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)  
