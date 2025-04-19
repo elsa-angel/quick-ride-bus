@@ -36,4 +36,9 @@ export const navData = [
     path: '/contact',
     icon: <PermContactCalendarIcon />,
   },
+  {
+    title: 'Location Tracking',
+    path: '/location',
+    icon: <PermContactCalendarIcon />,
+  },
 ];
