@@ -352,3 +352,42 @@ def ContactUsView(request):
             "error": "Invalid request method."
         }
         return JsonResponse(response_data, status=405)
+    
+@csrf_exempt
+def ScheduleCoordinatesView(request):
+    if request.method == 'GET':
+        try:
+            # Fetch all schedule objects
+            schedules = Schedule.objects.all()  # Or filter by specific conditions if needed
+            
+            # Prepare the response data
+            schedule_data = []
+
+            for schedule in schedules:
+                # Extract coordinates from the 'stops_coordinates' field
+                coordinates_str = schedule.stops_coordinates
+                
+                # Remove curly braces, trim any trailing commas, and split by '},{' to separate coordinate pairs
+                coordinates = coordinates_str.strip('{}').split('},{')  # Split by '},{' to separate coordinate pairs
+
+                # Clean and convert coordinates (strip spaces and handle possible extra characters)
+                coordinates = [
+                    tuple(map(lambda x: float(x.strip()), coord.replace(' ', '').strip('},').split(':')))  # Clean up spaces and remove trailing '}'
+                    for coord in coordinates
+                ]
+                
+                schedule_data.append({
+                    'id': schedule.id,
+                    'bus_id': schedule.bus.id,
+                    'stops_coordinates': coordinates,  # List of tuples (latitude, longitude)
+                    'stops': schedule.stops,
+                    'stops_timings': schedule.stops_timings,
+                    'running_days': schedule.running_days,
+                    'created_at': schedule.created_at,
+                    'updated_at': schedule.updated_at,
+                })
+
+            return JsonResponse({'schedules': schedule_data}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)

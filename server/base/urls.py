@@ -19,4 +19,7 @@ urlpatterns = [
     path('transactions/', TransactionsView, name='ewallet_transaction'),
 
     path('contact/', views.ContactUsView, name='contact-us'),
+
+    path('location/', views.ScheduleCoordinatesView, name='location_tracking'),
+
 ]
