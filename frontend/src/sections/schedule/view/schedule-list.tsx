@@ -52,7 +52,7 @@ export function ScheduleView() {
       <Card>
         <SearchForm setSchedules={handleSearch} />
 
-        {schedules?.length ? (
+        {schedules?.length > 0 ? (
           <Scrollbar>
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
@@ -79,16 +79,16 @@ export function ScheduleView() {
               </Table>
             </TableContainer>
           </Scrollbar>
-        ) : (
-          // <Box sx={{ p: 3, textAlign: 'center' }}>
-          //   <Typography variant="h6">No schedule available</Typography>
-          // </Box>
+        ) : schedules?.length === 0 ? (
           <Table>
             <TableBody>
-              {/* Display the TableNoData component when schedules are empty */}
               <TableNoData searchQuery="" />
             </TableBody>
           </Table>
+        ) : (
+          <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="body1">Start searching to see available schedules</Typography>
+          </Box>
         )}
       </Card>
     </DashboardContent>

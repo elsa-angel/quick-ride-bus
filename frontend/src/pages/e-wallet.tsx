@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title> {`Bookings - ${CONFIG.appName}`}</title>
+        <title> {`Ewallet - ${CONFIG.appName}`}</title>
       </Helmet>
 
       <EWallet />
