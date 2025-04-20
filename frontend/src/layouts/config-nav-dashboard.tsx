@@ -3,7 +3,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import DepartureBoardIcon from '@mui/icons-material/DepartureBoard';
 import WalletIcon from '@mui/icons-material/Wallet';
-
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 // ----------------------------------------------------------------------
 
 const icon = (name: string) => (
@@ -27,7 +27,7 @@ export const navData = [
     icon: <DepartureBoardIcon />,
   },
   {
-    title: 'Ewallets',
+    title: 'Ewallet',
     path: '/ewallet',
     icon: <WalletIcon />,
   },
@@ -39,6 +39,6 @@ export const navData = [
   {
     title: 'Location Tracking',
     path: '/location',
-    icon: <PermContactCalendarIcon />,
+    icon: <LocationOnIcon />,
   },
 ];

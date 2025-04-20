@@ -1,175 +1,149 @@
-/* Josh Channin 
-*/
-
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Roboto:300,400');
-
-.ewallet-container {
-  width: 100%;
-  padding: 40px 0px 40px 0px;
+._failed {
+  background: white;
+  box-shadow: 0 15px 25px #00000019;
+  padding: 45px;
+  width: 50%;
+  text-align: center;
+  margin: 40px auto;
+  border-bottom: solid 4px red !important;
 }
-
-.wallet {
-  margin: 0 auto;
-  border-radius: 5px;
-  background-color: #ffffff;
-  /* box-shadow: 0px 8px 20px 6px rgb(255, 178, 22);
-  -webkit-box-shadow: 0px 8px 20px 6px rgb(255, 178, 22);
-  -moz-box-shadow: 0px 8px 20px 6px rgb(255, 178, 22); */
-  height: 680px;
-  max-width: 900px;
-  min-width: 800px;
-  display: flex;
+._failed i {
+  font-size: 55px;
+  color: red !important;
 }
-
-.left-wallet {
-  background-color: #f2f2f2;
-  width: 300px;
-  height: initial;
-  padding: 40px;
-  border-radius: 5px;
-}
-
-.right-trans {
-  background-color: #ffffff;
-  width: 600px;
-  height: initial;
-  padding: 40px;
-  border-radius: 5px;
-}
-
-h1 {
-  color: #7d818e;
-  margin: 0;
-  font-weight: 400;
-  font-size: 25px;
-  font-family: 'Open Sans', sans-serif;
-}
-
-h4 {
-  margin: 0;
-  font-size: 30px;
-  font-weight: bold;
-  font-family: 'Open Sans', sans-serif;
-}
-
-.left-wallet h1,
-.left-wallet modal-open,
-.right-trans h1,
-.right-trans #balance {
-  font-family: 'Open Sans', sans-serif;
-  display: inline-block;
-}
-
-#balance {
-  float: right;
-  line-height: 34px;
-  font-size: 30px;
-  font-weight: bold;
-  color: #464646;
-}
-
-.modal-open {
-  display: inline-block;
-  float: right;
-  padding: 0;
-  font-size: 42px;
-  line-height: 36px;
-  color: #b7b7b7;
-  cursor: pointer;
-}
-
-.modal-open:hover {
-  display: inline-block;
-  float: right;
-  padding: 0;
-  font-size: 42px;
-  line-height: 36px;
-  color: #868686;
-  cursor: pointer;
-}
-
-.trans-list {
-  display: none;
-  border-top: 1px solid #f2f2f2;
-  margin-top: 40px;
-  overflow-y: scroll;
-  max-height: 550px;
-}
-
-.trans {
-  margin-top: 15px;
-}
-
-.trans-plus {
-  background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/384009/plus-icon.png);
-  background-repeat: no-repeat;
-  width: 40px;
-  height: 50px;
-  display: block;
-  float: left;
-  position: relative;
-  top: 15px;
-}
-
-.trans-minus {
-  background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/384009/minus-icon.png);
-  background-repeat: no-repeat;
-  width: 40px;
-  height: 50px;
-  display: block;
-  float: left;
-  position: relative;
-  top: 15px;
-}
-
-.trans-details {
-  margin-top: 20px;
-  display: inline-block;
-  width: 80%;
-}
-
-.trans-name,
-.trans-type-date {
-  margin: 3px;
-}
-
-.trans-name {
-  display: inline-block;
-}
-
-.trans-type-date {
-  color: #888;
-  padding-left: 40px;
-}
-
-.trans-amt {
-  float: right;
-  line-height: 55px;
-  font-size: 18px;
+._failed h2 {
+  margin-bottom: 12px;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.2;
   margin-top: 10px;
 }
 
-.amt-green {
-  color: rgb(113, 207, 66);
-}
-
-.amt-blue {
-  color: rgb(166, 178, 216);
-}
-
-::-webkit-scrollbar {
-  display: none;
-}
-
-.no-trans {
-  color: #888;
+._success {
+  background: white;
+  box-shadow: 0 15px 25px #00000019;
+  padding: 45px;
+  width: 50%;
   text-align: center;
+  margin: 40px auto;
+  border-bottom: solid 4px #28a745;
 }
 
-.valid-green {
-  border: 2px solid green;
+._success i {
+  font-size: 55px;
+  color: #28a745;
 }
 
-.valid-red {
-  border: 2px solid darkred;
+._success h2 {
+  margin-bottom: 12px;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 10px;
+}
+
+._success p {
+  margin-bottom: 0px;
+  font-size: 18px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.success-animation {
+  margin: 10px auto;
+}
+
+.checkmark {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #28a745;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px #28a745;
+  animation:
+    fill 0.4s ease-in-out 0.4s forwards,
+    scale 0.3s ease-in-out 0.9s both;
+  position: relative;
+  top: 5px;
+  right: 5px;
+  margin: 0 auto;
+}
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #28a745;
+  fill: #fff;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+.fail-animation {
+  margin: 150px auto;
+}
+
+.crossmark {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: red;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px red;
+  animation:
+    fill 0.4s ease-in-out 0.4s forwards,
+    scale 0.3s ease-in-out 0.9s both;
+  position: relative;
+  top: 5px;
+  right: 5px;
+  margin: 0 auto;
+}
+
+.crossmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: red;
+  fill: #fff;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.crossmark__cross {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px #28a745;
+  }
 }
