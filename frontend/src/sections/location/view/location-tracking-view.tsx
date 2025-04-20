@@ -26,6 +26,7 @@ const Routing: React.FC<RoutingProps> = ({ markerRef, coordinates }) => {
       waypoints: [L.latLng(markerRef.current?.getLatLng()!), destination],
       createMarker: () => null, // Do not place default markers
       showAlternatives: false,
+      routeWhileDragging: true,
     })
       .on('routesfound', (event: any) => {
         const route = event.routes[0];
@@ -51,6 +52,7 @@ export default function LocationTrackingView() {
   const [position] = useState<LatLngExpression>([9.9692, 76.319]);
   const [coordinates, setCoordinates] = useState<Array<[number, number]>>([]);
   const [selectedBus, setSelectedBus] = useState<string>('');
+  const [busSchedules, setBusSchedules] = useState<any[]>([]);
   const [buses, setBuses] = useState<any[]>([]);
   const [busDetailsAvailable, setBusDetailsAvailable] = useState<boolean>(false);
 
@@ -76,6 +78,8 @@ export default function LocationTrackingView() {
 
       if (response.data.schedules.length > 0) {
         setBusDetailsAvailable(true);
+        const busCoordinates = response.data.schedules[0].coordinates;
+        setCoordinates(busCoordinates);
       } else {
         setBusDetailsAvailable(false);
       }
@@ -124,7 +128,10 @@ export default function LocationTrackingView() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          <Marker position={position} ref={markerRef} />
+          {/* <Marker position={position} ref={markerRef} /> */}
+          {coordinates.map((coord, index) => (
+            <Marker key={index} position={coord} />
+          ))}
           <Routing markerRef={markerRef} coordinates={coordinates} />
         </MapContainer>
       )}
