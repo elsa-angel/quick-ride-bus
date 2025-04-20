@@ -10,9 +10,9 @@ urlpatterns = [
     path('auth-check/',views.check_authentication,name="auth-check"),
      path('auth/google/', GoogleLoginView, name='google-login'),
     path('schedule/', SearchScheduleView, name='schedule'),
-    path('bookings/', views.BookingView, name='bookings'),
-    path('bookings/<int:booking_id>/', views.BookingDetailsView, name='booking_details'),
-    path('bookingsupdate/<int:booking_id>/', views.UpdateBookingSeatsView, name='update_booking_seats'),
+    path('bookings/', BookingView, name='bookings'),
+    path('bookings/<int:booking_id>/', BookingDetailsView, name='booking_details'),
+    path('bookingsupdate/<int:booking_id>/', UpdateBookingSeatsView, name='update_booking_seats'),
     path('reservations/', ReservationView, name='reservation'),
     path('reserved_seats/<int:booking_id>/', ReservedSeatsView, name='reserved_seats'),
     path('reservations/cancel/<int:reservation_id>/', ReservationCancel, name='cancel_reservation'), 
@@ -20,6 +20,11 @@ urlpatterns = [
 
     path('contact/', views.ContactUsView, name='contact-us'),
 
-    path('location/', views.ScheduleCoordinatesView, name='location_tracking'),
+    path('location/', ScheduleCoordinatesView, name='location_tracking'),
+
+    path('buses/', Buses, name='buses'),
+    path('bus_details/<int:bus_id>/', BusDetails, name='bus_details'),
+
+
 
 ]
