@@ -84,8 +84,8 @@ class Ewallet(models.Model):
     
 class Transaction(models.Model):
     ewallet = models.ForeignKey('Ewallet', on_delete=models.CASCADE)
-    
-    type = models.CharField(max_length=1)  
+    transaction_rel_id = models.CharField(max_length=255, unique=True)
+    type = models.CharField(max_length=1)
     title = models.CharField(max_length=255)  
     amount = models.IntegerField()  
     description = models.CharField(max_length=255)  
