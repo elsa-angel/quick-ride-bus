@@ -6,6 +6,9 @@ from django.db import transaction as db_transaction
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.db import transaction
+from django.utils import timezone
+import uuid
 
 import json
 
@@ -222,50 +225,3 @@ def TransactionsView(request):
     except Exception as e:
         return JsonResponse({'error': 'An error occurred: ' + str(e)}, status=500)
     
-@login_required
-def EwalletUpdateView(request):
-    if request.method == "POST":
-        try:
-            # Parse JSON data from the request body
-            data = json.loads(request.body)
-
-            amount = data.get('amount')
-
-            sessionId = data.get('sessionId')
-
-            amount = float(amount)
-
-            if not amount or amount <= 0:
-                return JsonResponse({'error': 'Invalid amount'}, status=400)
-
-            user = request.user  
-
-            ewallet = Ewallet.objects.get(user=user)
-
-            # Update the ewallet balance
-            ewallet.balance += amount  
-            ewallet.save()
-
-            # Create a transaction record
-            transaction = Transaction.objects.create(
-                ewallet=ewallet,
-                type='credit',  
-                transaction_rel_id=sessionId,
-                title='Recharged',
-                amount=amount,
-                description='Payment for the user account',
-                status='Success'  
-            )
-
-            return JsonResponse({
-                'message': 'Ewallet balance updated successfully',
-                'new_balance': ewallet.balance
-            })
-        except Ewallet.DoesNotExist:
-            return JsonResponse({'error': 'Ewallet not found'}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)

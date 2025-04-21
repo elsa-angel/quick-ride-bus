@@ -18,6 +18,8 @@ urlpatterns = [
     path('reservations/cancel/<int:reservation_id>/', ReservationCancel, name='cancel_reservation'), 
     path('transactions/', TransactionsView, name='ewallet_transaction'),
     path('ewalletupdate/', EwalletUpdateView, name='ewallet_update'),
+    path('ewalletpayment/<int:booking_id>/', EwalletPaymentView, name='ewallet_payment'),
+
 
 
     path('contact/', views.ContactUsView, name='contact-us'),

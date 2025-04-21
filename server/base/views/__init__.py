@@ -4,3 +4,5 @@ from .schedules import *
 from .views import *
 from .bookings import *
 from .buses import *
+from .ewallets import *
+

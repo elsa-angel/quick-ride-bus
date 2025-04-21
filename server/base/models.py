@@ -85,11 +85,11 @@ class Ewallet(models.Model):
 class Transaction(models.Model):
     ewallet = models.ForeignKey('Ewallet', on_delete=models.CASCADE)
     transaction_rel_id = models.CharField(max_length=255, unique=True)
-    type = models.CharField(max_length=1)
+    type = models.CharField(max_length=255)
     title = models.CharField(max_length=255)  
     amount = models.IntegerField()  
     description = models.CharField(max_length=255)  
-    status = models.CharField(max_length=1)  
+    status = models.CharField(max_length=255)  
 
     created_at = models.DateTimeField(auto_now_add=True)  
     updated_at = models.DateTimeField(auto_now=True)  
