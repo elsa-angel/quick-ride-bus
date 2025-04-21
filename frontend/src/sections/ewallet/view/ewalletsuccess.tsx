@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import Stripe from 'stripe';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -91,6 +91,12 @@ const EwalletSuccessView: React.FC = () => {
             />
           </svg>
         </div>
+        &nbsp;
+        <Box sx={{ textAlign: 'center' }}>
+          <Button variant="contained" color="primary" href="/ewallet">
+            Go back
+          </Button>
+        </Box>
       </Box>
     </DashboardContent>
   );

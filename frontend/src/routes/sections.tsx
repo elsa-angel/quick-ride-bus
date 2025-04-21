@@ -7,6 +7,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+import EwalletFailedView from 'src/sections/ewallet/view/ewalletfailed';
 
 // ----------------------------------------------------------------------
 
@@ -19,6 +20,7 @@ export const ReservationSuccessPage = lazy(() => import('src/pages/reservation-s
 export const ReservationFailedPage = lazy(() => import('src/pages/reservation-failed'));
 export const EWalletPage = lazy(() => import('src/pages/e-wallet'));
 export const EWalletSuccessPage = lazy(() => import('src/pages/ewallet-success'));
+export const EWalletFailedaPage = lazy(() => import('src/pages/ewallet-failed'));
 
 export const LocationTrackingPage = lazy(() => import('src/pages/location-tracking'));
 
@@ -62,6 +64,7 @@ export function Router() {
         { path: '/reservation_failed/:booking_id', element: <ReservationFailedPage /> },
         { path: '/ewallet', element: <EWalletPage /> },
         { path: '/ewallet_success', element: <EWalletSuccessPage /> },
+        { path: '/ewallet_failed', element: <EwalletFailedView /> },
 
         { path: '/location', element: <LocationTrackingPage /> },
       ],

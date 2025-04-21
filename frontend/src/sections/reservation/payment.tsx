@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, Grid } from '@mui/material';
+import { Box, Typography, Button, Grid, Divider } from '@mui/material';
 import axiosInstance from 'src/api/axios-instance';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
 import { useLoadingBar } from 'react-top-loading-bar';
+import { useRouter } from 'src/routes/hooks';
 
 interface BookingDetailsProps {
   bookingId: number;
@@ -11,6 +12,8 @@ interface BookingDetailsProps {
 }
 
 const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }) => {
+  const router = useRouter();
+
   const [bookingData, setBookingData] = useState<any>(null);
 
   const { start, complete } = useLoadingBar({
@@ -98,6 +101,33 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
     return session;
   }
 
+  const payWithEwallet = async () => {
+    try {
+      start();
+      const response = await axiosInstance.post(`/ewalletpayment/${bookingId}/`, {
+        amount: totalAmount,
+      });
+      console.log('API Response:', response.data);
+      if (!response.data.success) {
+        //   alert('Sufficient eWallet Balance');
+        // } else {
+        alert('Insufficient eWallet Balance');
+      }
+      complete();
+      const transactionId = response.data.transaction.id;
+      console.log('Transaction ID:', transactionId);
+      if (transactionId) {
+        router.push(`/reservation_success/${BOOKING.booking_id}?transaction_id=${transactionId}`);
+      } else {
+        console.error('Transaction ID is missing in the response');
+      }
+      // router.push(`/reservation_success/${BOOKING.booking_id}?transaction_id=${transactionId}`);
+    } catch (error) {
+      complete();
+      console.error('Error during eWallet payment', error);
+    }
+  };
+
   const formatLocation = (location: string): string => {
     if (!location) return '';
     return location
@@ -184,6 +214,19 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
         </Button>
         <Button variant="contained" color="primary" onClick={makePayment}>
           Pay Now
+        </Button>
+      </Box>
+      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+        <Typography
+          variant="overline"
+          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
+        >
+          OR
+        </Typography>
+      </Divider>
+      <Box gap={1} display="flex" justifyContent="center">
+        <Button variant="contained" color="inherit" onClick={payWithEwallet}>
+          Pay with Ewallet
         </Button>
       </Box>
     </Box>

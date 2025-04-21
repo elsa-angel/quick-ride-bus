@@ -19,10 +19,13 @@ const ReservationSuccessView: React.FC = () => {
     const query = new URLSearchParams(location.search);
     return {
       sessionId: query.get('session_id'),
+      transactionId: query.get('transaction_id'),
     };
   };
 
-  const { sessionId } = getQueryParams();
+  const { sessionId, transactionId } = getQueryParams();
+
+  const qrCodeValue = sessionId || transactionId;
 
   // Get Booking Data using booking_id
   const url = window.location.href;
@@ -32,10 +35,18 @@ const ReservationSuccessView: React.FC = () => {
 
   useEffect(() => {
     const makeReservation = async () => {
-      if (!sessionId || !bookingId) return;
+      if (!(sessionId || transactionId) || !bookingId) return;
 
       try {
-        const stripeSession = await stripe.checkout.sessions.retrieve(sessionId as string);
+        let paymentId: string | undefined;
+
+        if (sessionId) {
+          const stripeSession = await stripe.checkout.sessions.retrieve(sessionId);
+          paymentId = stripeSession.id;
+        } else if (transactionId) {
+          paymentId = transactionId; // If transactionId is available, use it
+        }
+        // const stripeSession = await stripe.checkout.sessions.retrieve(sessionId as string);
         const bookings = await axiosInstance.get(`/bookings/${bookingId}`);
 
         const amount = bookings.data.amount;
@@ -47,9 +58,10 @@ const ReservationSuccessView: React.FC = () => {
         const reservationData = {
           schedule_id: bookings?.data?.schedule?.id,
           user_id: bookings?.data?.user_id,
-          payment_id: stripeSession.id,
+          payment_id: paymentId,
           amount: totalAmount,
-          status: stripeSession?.payment_status,
+          // status: stripeSession?.payment_status ,
+          status: paymentId ? 'paid' : 'pending',
           departure_stop: bookings?.data?.departure_stop,
           departure_time: bookings?.data?.departure_time,
           arrival_stop: bookings?.data?.arrival_stop,
@@ -66,8 +78,7 @@ const ReservationSuccessView: React.FC = () => {
     };
 
     makeReservation();
-  }, [sessionId, bookingId]); // ✅ Only include necessary dependencies
-
+  }, [sessionId, transactionId, bookingId]);
   return (
     <DashboardContent>
       <Box display="flex" flexDirection="column" alignItems="flex-start" mb={5}>
@@ -111,7 +122,7 @@ const ReservationSuccessView: React.FC = () => {
         </div>
         {/* QR Code */}
         <Box sx={{ textAlign: 'center', mb: 3 }}>
-          <QRCode value={sessionId as string} size={128} />
+          <QRCode value={qrCodeValue as string} size={128} />
         </Box>
         {/* Buttons */}
         <Box sx={{ textAlign: 'center' }}>

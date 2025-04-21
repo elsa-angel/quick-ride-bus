@@ -23,8 +23,6 @@ import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
 import { useLoadingBar } from 'react-top-loading-bar';
 
-import Payment from 'src/sections/reservation/payment';
-
 export function EWallet() {
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -118,7 +116,7 @@ export function EWallet() {
       line_items: [{ price: price.id, quantity: 1 }],
       mode: 'payment',
       success_url: `http://localhost:3039/ewallet_success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:3039/reservation_failed`,
+      cancel_url: `http://localhost:3039/ewallet_failed`,
     });
 
     return session;
