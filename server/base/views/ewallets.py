@@ -38,10 +38,6 @@ def EwalletUpdateView(request):
 
             ewallet = Ewallet.objects.get(user=user)
 
-            # Update the ewallet balance
-            ewallet.balance += amount  
-            ewallet.save()
-
             # Create a transaction record
             transaction = Transaction.objects.create(
                 ewallet=ewallet,
@@ -52,6 +48,10 @@ def EwalletUpdateView(request):
                 description='Payment for the user account',
                 status='Success'  
             )
+
+            # Update the ewallet balance
+            ewallet.balance += amount  
+            ewallet.save()
 
             return JsonResponse({
                 'message': 'Ewallet balance updated successfully',

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Bus(models.Model):
-    bus_name = models.CharField(max_length=100)  
+    bus_name = models.CharField(max_length=100)
     num_seats = models.IntegerField() 
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)   

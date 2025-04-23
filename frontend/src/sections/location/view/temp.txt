@@ -1,0 +1,25 @@
+useEffect(() => {
+  const fetchCoordinates = async () => {
+    try {
+      const response = await axiosInstance.get(`/buses/`);
+      console.log('Coordinates:', response.data);
+      const fetchedBuses = response.data?.buses || [];
+      setBuses(fetchedBuses);
+      const schedules = response.data?.schedules || [];
+      setBusSchedules(schedules);
+      const allCoordinates = schedules.flatMap((schedule: any) => schedule.stops_coordinates);
+      setCoordinates(allCoordinates);
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+    }
+  };
+  fetchCoordinates();
+}, []);
+
+
+// import PropTypes from 'prop-types';
+// const busDivIcon = L.divIcon({
+//   html: '🚌',
+//   className: '',
+//   iconSize: [0, 0],
+// });

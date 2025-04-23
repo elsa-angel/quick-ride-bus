@@ -35,10 +35,12 @@ interface Schedule {
 export function ScheduleView() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isScheduleAvailable, setisScheduleAvailable] = useState<boolean>(false);
 
   const handleSearch = (newSchedules: any[], query: string) => {
     setSchedules(newSchedules);
     setSearchQuery(query);
+    setisScheduleAvailable(true);
   };
 
   return (
@@ -52,7 +54,7 @@ export function ScheduleView() {
       <Card>
         <SearchForm setSchedules={handleSearch} />
 
-        {schedules?.length > 0 ? (
+        {isScheduleAvailable && schedules?.length > 0 ? (
           <Scrollbar>
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
@@ -79,7 +81,7 @@ export function ScheduleView() {
               </Table>
             </TableContainer>
           </Scrollbar>
-        ) : schedules?.length === 0 ? (
+        ) : isScheduleAvailable && schedules?.length === 0 ? (
           <Table>
             <TableBody>
               <TableNoData searchQuery="" />

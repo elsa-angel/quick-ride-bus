@@ -5,15 +5,16 @@ import Stripe from 'stripe';
 import { DashboardContent } from 'src/layouts/dashboard';
 import '../ewallet.css';
 import axiosInstance from 'src/api/axios-instance';
+import { useRouter } from 'src/routes/hooks';
 
 const stripe = new Stripe(
   'sk_test_51Q3wbuIMqVOQVQ5AbRLzJrBynzDiHtpcVrieYFPfImc4kgw8BYkimtnILsPzV4aEv2jI5zGhJUduy7CyEaZVHrJY00Jcgc7EXC'
 );
 
 const EwalletSuccessView: React.FC = () => {
-  const location = useLocation();
+  const router = useRouter();
 
-  const [balance, setBalance] = useState<number | null>(null);
+  const location = useLocation();
 
   // Function to get the query parameters
   const getQueryParams = () => {
@@ -38,17 +39,16 @@ const EwalletSuccessView: React.FC = () => {
 
         console.log('Amount:', amount);
 
-        const response = await axiosInstance.post('/ewalletupdate/', { amount, sessionId });
-
-        if (response.data.new_balance !== undefined) {
-          setBalance(response.data.new_balance);
-        }
+        await axiosInstance.post('/ewalletupdate/', { amount, sessionId });
       } catch (error: any) {
         console.error('Error occurred:', error);
       }
+      setTimeout(() => {
+        router.push('/ewallet');
+      }, 1000);
     };
     updateEwalletBalance();
-  }, [sessionId]);
+  }, [sessionId, router]);
 
   return (
     <DashboardContent>
@@ -92,11 +92,11 @@ const EwalletSuccessView: React.FC = () => {
           </svg>
         </div>
         &nbsp;
-        <Box sx={{ textAlign: 'center' }}>
+        {/* <Box sx={{ textAlign: 'center' }}>
           <Button variant="contained" color="primary" href="/ewallet">
             Go back
           </Button>
-        </Box>
+        </Box> */}
       </Box>
     </DashboardContent>
   );
