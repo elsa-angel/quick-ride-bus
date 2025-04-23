@@ -1,0 +1,30 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mainBusGradient" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4DA8F6"/>
+      <stop offset="1" stop-color="#0069E0"/>
+    </linearGradient>
+    <linearGradient id="shadowBusGradient" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A0D2FA"/>
+      <stop offset="1" stop-color="#5BA9F0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow bus: upright, positioned slightly left and above -->
+  <g transform="translate(-4, -2)">
+    <rect x="12" y="4" width="40" height="56" rx="8" fill="url(#shadowBusGradient)" />
+    <rect x="18" y="12" width="28" height="20" rx="2" fill="#C5E4FB"/>
+    <circle cx="20" cy="48" r="4" fill="#C5E4FB"/>
+    <circle cx="44" cy="48" r="4" fill="#C5E4FB"/>
+    <rect x="24" y="6" width="16" height="4" rx="2" fill="#7BB8F5"/>
+  </g>
+
+  <!-- Main bus: upright, positioned more to the right and slightly lower -->
+  <g transform="translate(8, 0)">
+    <rect x="12" y="4" width="40" height="56" rx="8" fill="url(#mainBusGradient)" />
+    <rect x="18" y="12" width="28" height="20" rx="2" fill="#78BCF8"/>
+    <circle cx="20" cy="48" r="4" fill="#78BCF8"/>
+    <circle cx="44" cy="48" r="4" fill="#78BCF8"/>
+    <rect x="24" y="6" width="16" height="4" rx="2" fill="#002F6C"/>
+  </g>
+</svg>
