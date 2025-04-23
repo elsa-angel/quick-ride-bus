@@ -3,7 +3,7 @@ import axiosInstance from 'src/api/axios-instance';
 
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Box } from '@mui/material';
+import { Box, Button, Card, CardContent, CardMedia } from '@mui/material';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAuth } from 'src/layouts/components/AuthContext';
 import { WidgetSummary } from '../widget-summary';
@@ -20,6 +20,8 @@ export function OverviewAnalyticsView() {
   const [reservationStats, setReservationStats] = useState({ categories: [], series: [] });
   const [busVisits, setBusVisits] = useState({ series: [] });
   const [paymentStats, setPaymentStats] = useState({ categories: [], series: [] });
+
+  const [upcomingReservations, setUpcomingReservations] = useState<any[]>([]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -102,10 +104,24 @@ export function OverviewAnalyticsView() {
     }
   }, [isAdmin]);
 
+  const fetchUpcomingReservations = async () => {
+    try {
+      const response = await axiosInstance.get('/upcoming-reservations/');
+      setUpcomingReservations(response.data.upcoming_reservations);
+    } catch (error) {
+      console.error('Error fetching upcoming reservations:', error);
+    }
+  };
+  useEffect(() => {
+    if (authUser?.user?.id) {
+      fetchUpcomingReservations();
+    }
+  }, [authUser]);
+
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-        Hi, Welcome back 👋
+        Welcome back, {authUser?.user?.name} 👋
       </Typography>
       {isAdmin ? (
         <div>
@@ -188,9 +204,52 @@ export function OverviewAnalyticsView() {
           </Grid>
         </div>
       ) : (
-        <Typography variant="h6" sx={{ mb: { xs: 2, md: 4 } }}>
-          Explore your bus reservations.
-        </Typography>
+        <Box sx={{ padding: 3 }}>
+          <Typography variant="h6" sx={{ mb: { xs: 2, md: 4 } }}>
+            Your Upcoming Reservations:
+          </Typography>
+
+          <Grid container spacing={3}>
+            {upcomingReservations.map((reservation) => (
+              <Grid xs={12} sm={6} md={4} key={reservation.id}>
+                <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                      {reservation.departure_stop
+                        .toLowerCase()
+                        .split(' ')
+                        .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ')}{' '}
+                      to{' '}
+                      {reservation.arrival_stop
+                        .toLowerCase()
+                        .split(' ')
+                        .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ')}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Departure Time: {reservation.departure_time}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Departure Date: {reservation.departure_date}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Seats Reserved: {reservation.reserved_seats}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      Amount: ₹{reservation.amount}
+                    </Typography>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Button variant="contained" color="primary" href="/bookings">
+                        View more details
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
       )}
     </DashboardContent>
   );
