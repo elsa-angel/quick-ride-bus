@@ -29,6 +29,15 @@ urlpatterns = [
     path('buses/', Buses, name='buses'),
     path('bus_details/<int:bus_id>/', BusDetails, name='bus_details'),
 
+    path('bus-creation-stats/', BusCreationStats, name='bus_creation_stats'),
+    path('user-creation-stats/', UserCreationStats, name='user_creation_stats'),
+    path('reservation-creation-stats/', ReservationCreationStats, name='reservation_creation_stats'),
+    path('message-creation-stats/', MessageCreationStats, name='message_creation_stats'),
 
+    path('bus-visits/', BusVisits, name='bus-visits'),
+    path('payment-method-stats/', PaymentMethodStats, name='payment_method_stats'),
+
+    
+    
 
 ]

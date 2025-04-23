@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
@@ -40,6 +40,7 @@ def check_authentication(request):
                 "name": f"{request.user.first_name} {request.user.last_name}",
                 "email": request.user.email,
             },
+            "isSuperUser": request.user.is_superuser,
             'csrftoken': csrf_token
         },status=200)
     return JsonResponse({"authenticated": False, "error": "User not logged in", 'csrftoken': csrf_token},status=401)
@@ -111,32 +112,48 @@ def RegisterView(request):
 
 @csrf_protect
 def LoginView(request):
-    # import rpdb; rpdb.set_trace()
-    
     if request.method == "POST":
         try:
             data = json.loads(request.body)['data']
             email = data['email']
             password = data['password']
-            # import rpdb; rpdb.set_trace()
+
+            # First, try to authenticate the user as a regular user (email is username)
             user = authenticate(request, username=email, password=password)
 
+            # If the regular user authentication fails, check if it's a superuser
+            if user is None:
+                try:
+                    # Get the user by email (because the superuser's username is different)
+                    user = get_user_model().objects.get(email=email)
+
+                    # Check if this user is a superuser
+                    if user.is_superuser:
+                        # Authenticate with their actual username
+                        user = authenticate(request, username=user.username, password=password)
+                    else:
+                        return JsonResponse({"error": "Invalid login credentials"}, status=401)
+                except get_user_model().DoesNotExist:
+                    return JsonResponse({"error": "Invalid login credentials"}, status=401)
+
+            # If the user is found, login the user and return a success response
             if user is not None:
                 login(request, user)
-                return JsonResponse ({
+                return JsonResponse({
                     "isAuthenticated": True,
                     "user": {
                         "id": request.user.id,
-                        "name": user.first_name + user.last_name,
-                        "email": user.username,
+                        "name": user.first_name + " " + user.last_name,
+                        "email": user.username,  # Assuming username is the email
+                        "isSuperUser": user.is_superuser
                     }
-                
                 }, status=200)
             else:
-                 return JsonResponse ({"error": "Invalid login credentials"},status=401)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSOn format"}, status=400)
+                return JsonResponse({"error": "Invalid login credentials"}, status=401)
         
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 def LogoutView(request):

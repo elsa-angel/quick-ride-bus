@@ -5,4 +5,5 @@ from .views import *
 from .bookings import *
 from .buses import *
 from .ewallets import *
+from .dashboard import *
 
