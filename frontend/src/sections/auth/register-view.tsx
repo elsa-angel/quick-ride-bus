@@ -111,7 +111,6 @@ export function RegisterView() {
         label="Name"
         value={data.name}
         onChange={handleChange}
-        placeholder="name"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
         error={!!errors.name}
@@ -123,7 +122,6 @@ export function RegisterView() {
         label="Email address"
         value={data.email}
         onChange={handleChange}
-        placeholder="hello@gmail.com"
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
         error={!!errors.email}
@@ -136,7 +134,6 @@ export function RegisterView() {
         label="Password"
         value={data.password}
         onChange={handleChange}
-        placeholder="@demo1234"
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
         InputProps={{
@@ -159,7 +156,6 @@ export function RegisterView() {
         label="Confirm Password"
         value={data.confirmPassword}
         onChange={handleChange}
-        placeholder="@demo1234"
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
         InputProps={{

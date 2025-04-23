@@ -9,6 +9,9 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 import { useRouter } from 'src/routes/hooks';
@@ -80,6 +83,7 @@ export function SignInView() {
       router.push('/');
     } catch (error) {
       console.error('Error during login:', error);
+      toastr.error('Invalid login attempt. Please check your credentials.');
     }
   }, [router, data, errors, setAuthUser]);
 
@@ -104,6 +108,7 @@ export function SignInView() {
 
   const handleLoginFailure = (response: any) => {
     console.error('Login Failed:', response);
+    toastr.error('Login failed. Please try again.');
   };
 
   const renderForm = (
@@ -198,7 +203,12 @@ export function SignInView() {
           "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"
         </IconButton> */}
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-          <GoogleLogin onSuccess={handleLoginSuccess} />
+          <GoogleLogin
+            onSuccess={handleLoginSuccess}
+            onError={() => {
+              toastr.error('Google login failed. Please try again.');
+            }}
+          />
         </GoogleOAuthProvider>
       </Box>
     </>

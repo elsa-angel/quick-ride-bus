@@ -141,6 +141,10 @@ export function ContactUsView() {
                     fontSize: '1rem',
                     py: 1.2,
                     fontWeight: 'bold',
+                    backgroundImage: 'linear-gradient(135deg, #3f51b5, #1a237e)',
+                    '&:hover': {
+                      backgroundImage: 'linear-gradient(135deg, #3f51b5, #1a237e)',
+                    },
                   }}
                 >
                   Submit
@@ -154,7 +158,7 @@ export function ContactUsView() {
               xs={12}
               md={6}
               sx={{
-                backgroundColor: 'primary.light',
+                backgroundImage: 'linear-gradient(135deg, #3f51b5, #1a237e)',
                 borderRadius: 2,
                 p: 4,
                 pl: 8, // Increased left padding for more space
@@ -165,23 +169,29 @@ export function ContactUsView() {
                 minHeight: '100%',
               }}
             >
-              <Typography variant="h5" fontWeight="bold" mb={3} color="primary.dark">
+              <Typography variant="h5" fontWeight="bold" mb={3} color="white">
                 Contact Information
               </Typography>
 
               <Box display="flex" alignItems="center" mb={2}>
-                <LocationOnIcon sx={{ color: 'primary.main', mr: 2 }} />
-                <Typography variant="body1">123 Main Street, New York, NY 10001</Typography>
+                <LocationOnIcon sx={{ color: 'white', mr: 2 }} />
+                <Typography variant="body1" color="white">
+                  123 Main Street, Kochi, Kerala 682001, India
+                </Typography>
               </Box>
 
               <Box display="flex" alignItems="center" mb={2}>
-                <EmailIcon sx={{ color: 'primary.main', mr: 2 }} />
-                <Typography variant="body1">contact@example.com</Typography>
+                <EmailIcon sx={{ color: 'white', mr: 2 }} />
+                <Typography variant="body1" color="white">
+                  admin@qrb.com
+                </Typography>
               </Box>
 
               <Box display="flex" alignItems="center">
-                <PhoneIcon sx={{ color: 'primary.main', mr: 2 }} />
-                <Typography variant="body1">+1 (123) 456-7890</Typography>
+                <PhoneIcon sx={{ color: 'white', mr: 2 }} />
+                <Typography variant="body1" color="white">
+                  +91 484 2398123
+                </Typography>
               </Box>
             </Grid>
           </Grid>

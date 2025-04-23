@@ -32,13 +32,13 @@ export const navData = [
     icon: <WalletIcon />,
   },
   {
-    title: 'Contact Us',
-    path: '/contact',
-    icon: <PermContactCalendarIcon />,
-  },
-  {
     title: 'Location Tracking',
     path: '/location',
     icon: <LocationOnIcon />,
+  },
+  {
+    title: 'Contact Us',
+    path: '/contact',
+    icon: <PermContactCalendarIcon />,
   },
 ];
