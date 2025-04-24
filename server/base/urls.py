@@ -36,6 +36,8 @@ urlpatterns = [
 
     path('bus-visits/', BusVisits, name='bus-visits'),
     path('payment-method-stats/', PaymentMethodStats, name='payment_method_stats'),
+    path('reservation-status-stats/', ReservationStatusStats, name='reservation_status_stats'),
+
 
     path('upcoming-reservations/', UpcomingReservations, name='upcoming-reservations'),
 

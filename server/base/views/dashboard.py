@@ -149,6 +149,39 @@ def PaymentMethodStats(request):
         ]
     })
 
+def ReservationStatusStats(request):
+    # Filter reservations based on status
+    completed_reservations = Reservation.objects.filter(status='completed')
+    cancelled_reservations = Reservation.objects.filter(status='cancelled')
+
+    # Group by month using TruncMonth
+    completed_month_counts = completed_reservations.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month')
+    cancelled_month_counts = cancelled_reservations.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month')
+
+    # Prepare the chart data
+    categories = [calendar.month_name[i] for i in range(1, 13)]  # Names of months
+    
+    completed_series = [0] * 12  # Initialize an array for completed reservations
+    cancelled_series = [0] * 12  # Initialize an array for cancelled reservations
+
+    # Populate completed reservation data
+    for data in completed_month_counts:
+        month = data['month'].month  # Get the month part of the date
+        completed_series[month - 1] = data['count']
+
+    # Populate cancelled reservation data
+    for data in cancelled_month_counts:
+        month = data['month'].month  # Get the month part of the date
+        cancelled_series[month - 1] = data['count']
+
+    # Return the data in a format that can be used for rendering the chart
+    return JsonResponse({
+        'categories': categories,
+        'series': [
+            {'name': 'Completed', 'data': completed_series},
+            {'name': 'Cancelled', 'data': cancelled_series}
+        ]
+    })
 
 def UpcomingReservations(request):
     # Get the current time in Asia/Kolkata timezone

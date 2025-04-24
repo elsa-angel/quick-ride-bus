@@ -20,6 +20,10 @@ export function OverviewAnalyticsView() {
   const [reservationStats, setReservationStats] = useState({ categories: [], series: [] });
   const [busVisits, setBusVisits] = useState({ series: [] });
   const [paymentStats, setPaymentStats] = useState({ categories: [], series: [] });
+  const [reservationStatusStats, setReservationStatusStats] = useState({
+    categories: [],
+    series: [],
+  });
 
   const [upcomingReservations, setUpcomingReservations] = useState<any[]>([]);
 
@@ -102,6 +106,18 @@ export function OverviewAnalyticsView() {
 
       fetchPaymentStats();
     }
+    if (isAdmin) {
+      const fetchReservationStatusStats = async () => {
+        try {
+          const response = await axiosInstance.get('/reservation-status-stats/');
+          setReservationStatusStats(response.data);
+        } catch (error) {
+          console.error('Error fetching reservation status stats:', error);
+        }
+      };
+
+      fetchReservationStatusStats();
+    }
   }, [isAdmin]);
 
   const fetchUpcomingReservations = async () => {
@@ -141,7 +157,7 @@ export function OverviewAnalyticsView() {
 
             <Grid xs={12} sm={6} md={3}>
               <WidgetSummary
-                title="New users"
+                title="Users"
                 percent={-0.1}
                 total={userStats.series.reduce((acc, val) => acc + val, 0)} // Total number of users
                 color="secondary"
@@ -191,13 +207,23 @@ export function OverviewAnalyticsView() {
                 }}
               />
             </Grid>
-            <Grid xs={12} md={6} lg={6}>
+            {/* <Grid xs={12} md={6} lg={6}>
               <PaymentMethods
                 title="Payment Methods"
                 subheader="(+43%) than last year"
                 chart={{
                   categories: paymentStats.categories,
                   series: paymentStats.series,
+                }}
+              />
+            </Grid> */}
+            <Grid xs={12} md={6} lg={6}>
+              <PaymentMethods
+                title="Reservations Status"
+                subheader="Status: Completed and Cancelled"
+                chart={{
+                  categories: reservationStatusStats.categories,
+                  series: reservationStatusStats.series,
                 }}
               />
             </Grid>
@@ -209,46 +235,52 @@ export function OverviewAnalyticsView() {
             Your Upcoming Reservations:
           </Typography>
 
-          <Grid container spacing={3}>
-            {upcomingReservations.map((reservation) => (
-              <Grid xs={12} sm={6} md={4} key={reservation.id}>
-                <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                      {reservation.departure_stop
-                        .toLowerCase()
-                        .split(' ')
-                        .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(' ')}{' '}
-                      to{' '}
-                      {reservation.arrival_stop
-                        .toLowerCase()
-                        .split(' ')
-                        .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(' ')}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Departure Time: {reservation.departure_time}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Departure Date: {reservation.departure_date}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Seats Reserved: {reservation.reserved_seats}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                      Amount: ₹{reservation.amount}
-                    </Typography>
-                    <Box sx={{ textAlign: 'center' }}>
-                      <Button variant="contained" color="primary" href="/bookings">
-                        View more details
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          {upcomingReservations.length > 0 ? (
+            <Grid container spacing={3}>
+              {upcomingReservations.map((reservation) => (
+                <Grid xs={12} sm={6} md={4} key={reservation.id}>
+                  <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                        {reservation.departure_stop
+                          .toLowerCase()
+                          .split(' ')
+                          .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(' ')}{' '}
+                        to{' '}
+                        {reservation.arrival_stop
+                          .toLowerCase()
+                          .split(' ')
+                          .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(' ')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Departure Time: {reservation.departure_time}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Departure Date: {reservation.departure_date}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        Seats Reserved: {reservation.reserved_seats}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        Amount: ₹{reservation.amount}
+                      </Typography>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Button variant="contained" color="primary" href="/bookings">
+                          View more details
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+              You have no upcoming reservations. Please make a new booking.
+            </Typography>
+          )}
         </Box>
       )}
     </DashboardContent>
