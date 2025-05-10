@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Bus(models.Model):
-    bus_name = models.CharField(max_length=100)  
+    bus_name = models.CharField(max_length=100)
     num_seats = models.IntegerField() 
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)   
@@ -20,6 +20,7 @@ class Schedule(models.Model):
     stops_timings = models.CharField(max_length=255)
     stops_distance = models.CharField(max_length=255)
     running_days = models.CharField(max_length=255)
+    stops_coordinates = models.CharField(max_length=255) 
     
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)  
@@ -27,15 +28,7 @@ class Schedule(models.Model):
     # def __str__(self):
     #     return self.name
 
-class Message(models.Model):
-    name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #     return self.name
 
 class Booking(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)  
@@ -62,7 +55,7 @@ class Booking(models.Model):
 class Reservation(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    payment_id = models.CharField(max_length=255)
+    payment_id = models.CharField(max_length=255, unique=True)
     departure_stop = models.CharField(max_length=255)
     departure_time = models.CharField(max_length=255)
     arrival_stop = models.CharField(max_length=255)
@@ -78,3 +71,38 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"Reservation {self.id}"
+    
+class Ewallet(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE) 
+    balance = models.IntegerField() 
+
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    # def __str__(self):
+    #     return f"Ewallet for {self.user.username} with balance {self.balance}"
+    
+class Transaction(models.Model):
+    ewallet = models.ForeignKey('Ewallet', on_delete=models.CASCADE)
+    transaction_rel_id = models.CharField(max_length=255, unique=True)
+    type = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)  
+    amount = models.IntegerField()  
+    description = models.CharField(max_length=255)  
+    status = models.CharField(max_length=255)  
+
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True)  
+
+    def __str__(self):
+        return f"Transaction {self.id} - {self.title} - {self.status}"
+    
+class Message(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # def __str__(self):
+    #     return self.name

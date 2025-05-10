@@ -7,9 +7,16 @@ function SearchForm({ setSchedules }: any) {
   const [formData, setFormData] = useState({
     from: 'a',
     to: 'b',
-    date: '2025-03-18',
+    date: '2025-04-15',
     time: '09:00',
   });
+
+  // const [formData, setFormData] = useState({
+  //   from: '',
+  //   to: '',
+  //   date: '',
+  //   time: '',
+  // });
 
   const [errors, setErrors] = useState({
     from: '',
@@ -73,10 +80,16 @@ function SearchForm({ setSchedules }: any) {
       try {
         const response: any = await axiosInstance.post('/schedule/', { formData });
         console.log(response);
+        if (response?.data?.schedules && response.data.schedules.length > 0) {
+          setSchedules(response?.data?.schedules); // Set the schedules if available
+        } else {
+          setSchedules([]); // If no schedules found, set to an empty array
+        }
 
-        setSchedules(response?.data?.schedules);
+        // setSchedules(response?.data?.schedules);
       } catch (error) {
         console.error('Error :', error);
+        setSchedules([]);
       }
       // setProcessing(false);
     },
@@ -152,13 +165,11 @@ function SearchForm({ setSchedules }: any) {
       />
       &nbsp;
       <LoadingButton
-        fullWidth
-        size="large"
         type="submit"
         color="inherit"
         variant="contained"
         onClick={handleSubmit}
-        sx={{ width: 265, height: '56px' }}
+        sx={{ width: 120, height: '56px' }}
       >
         Search
       </LoadingButton>

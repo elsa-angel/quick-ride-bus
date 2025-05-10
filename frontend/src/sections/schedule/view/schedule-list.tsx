@@ -14,13 +14,34 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { ScheduleTableRow } from '../schedule-table-row';
 import { ScheduleTableHead } from '../schedule-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
+import { TableNoData } from '../table-no-data';
 
 import SearchForm from '../SearchForm';
 
 // ----------------------------------------------------------------------
+interface Schedule {
+  id: string;
+  user_id: string;
+  bus_name: string;
+  from: string;
+  to: string;
+  date: string;
+  from_time: string;
+  to_time: string;
+  time_difference: string;
+  fare: string;
+}
 
 export function ScheduleView() {
-  const [schedules, setSchedules] = useState([]);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isScheduleAvailable, setisScheduleAvailable] = useState<boolean>(false);
+
+  const handleSearch = (newSchedules: any[], query: string) => {
+    setSchedules(newSchedules);
+    setSearchQuery(query);
+    setisScheduleAvailable(true);
+  };
 
   return (
     <DashboardContent>
@@ -31,9 +52,9 @@ export function ScheduleView() {
       </Box>
 
       <Card>
-        <SearchForm setSchedules={setSchedules} />
+        <SearchForm setSchedules={handleSearch} />
 
-        {schedules?.length ? (
+        {isScheduleAvailable && schedules?.length > 0 ? (
           <Scrollbar>
             <TableContainer sx={{ overflow: 'unset' }}>
               <Table sx={{ minWidth: 800 }}>
@@ -60,7 +81,17 @@ export function ScheduleView() {
               </Table>
             </TableContainer>
           </Scrollbar>
-        ) : null}
+        ) : isScheduleAvailable && schedules?.length === 0 ? (
+          <Table>
+            <TableBody>
+              <TableNoData searchQuery="" />
+            </TableBody>
+          </Table>
+        ) : (
+          <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="body1">Start searching to see available schedules</Typography>
+          </Box>
+        )}
       </Card>
     </DashboardContent>
   );

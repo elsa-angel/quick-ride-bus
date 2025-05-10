@@ -1,5 +1,6 @@
 from django.urls import path # type: ignore
 from . import views
+from .views import *
 
 urlpatterns = [
     path('csrf-cookie/', views.csrf_cookie, name='csrf_cookie'),
@@ -7,13 +8,37 @@ urlpatterns = [
     path('login', views.LoginView, name='login'),
     path('logout', views.LogoutView, name='logout'),
     path('auth-check/',views.check_authentication,name="auth-check"),
-    path('schedule/', views.SearchScheduleView, name='schedule'),
-    path('bookings/', views.BookingView, name='bookings'),
-    path('bookings/<int:booking_id>/', views.BookingDetailsView, name='booking_details'),
-    path('reserved_seats/<int:booking_id>/', views.SeatAvailabilityView, name='seat_availability'),
-    path('bookingsupdate/<int:booking_id>/', views.UpdateBookingSeatsView, name='update_booking_seats'),
-    path('reservations/', views.ReservationView, name='reservation'),
-    path('reserved_seats/<int:booking_id>/', views.ReservedSeatsView, name='reserved_seats'),
-    path('reservationlist/', views.ReservationListView, name='reservation_list'),
+     path('auth/google/', GoogleLoginView, name='google-login'),
+    path('schedule/', SearchScheduleView, name='schedule'),
+    path('bookings/', BookingView, name='bookings'),
+    path('bookings/<int:booking_id>/', BookingDetailsView, name='booking_details'),
+    path('bookingsupdate/<int:booking_id>/', UpdateBookingSeatsView, name='update_booking_seats'),
+    path('reservations/', ReservationView, name='reservation'),
+    path('reserved_seats/<int:booking_id>/', ReservedSeatsView, name='reserved_seats'),
+    path('reservations/cancel/<int:reservation_id>/', ReservationCancel, name='cancel_reservation'), 
+    path('transactions/', TransactionsView, name='ewallet_transaction'),
+    path('ewalletupdate/', EwalletUpdateView, name='ewallet_update'),
+    path('ewalletpayment/<int:booking_id>/', EwalletPaymentView, name='ewallet_payment'),
+
+
+
     path('contact/', views.ContactUsView, name='contact-us'),
+
+    path('location/', ScheduleCoordinatesView, name='location_tracking'),
+
+    path('buses/', Buses, name='buses'),
+    path('bus_details/<int:bus_id>/', BusDetails, name='bus_details'),
+
+    path('bus-creation-stats/', BusCreationStats, name='bus_creation_stats'),
+    path('user-creation-stats/', UserCreationStats, name='user_creation_stats'),
+    path('reservation-creation-stats/', ReservationCreationStats, name='reservation_creation_stats'),
+    path('message-creation-stats/', MessageCreationStats, name='message_creation_stats'),
+
+    path('bus-visits/', BusVisits, name='bus-visits'),
+    path('payment-method-stats/', PaymentMethodStats, name='payment_method_stats'),
+    path('reservation-status-stats/', ReservationStatusStats, name='reservation_status_stats'),
+
+
+    path('upcoming-reservations/', UpcomingReservations, name='upcoming-reservations'),
+
 ]

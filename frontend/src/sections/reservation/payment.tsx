@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, Grid, LinearProgress } from '@mui/material';
+import { Box, Typography, Button, Grid, Divider } from '@mui/material';
 import axiosInstance from 'src/api/axios-instance';
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
+import { useLoadingBar } from 'react-top-loading-bar';
+import { useRouter } from 'src/routes/hooks';
 
 interface BookingDetailsProps {
   bookingId: number;
@@ -10,8 +12,14 @@ interface BookingDetailsProps {
 }
 
 const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }) => {
+  const router = useRouter();
+
   const [bookingData, setBookingData] = useState<any>(null);
-  const [progress, setProgress] = useState(100);
+
+  const { start, complete } = useLoadingBar({
+    color: 'blue',
+    height: 2,
+  });
 
   useEffect(() => {
     const getBookingDetails = async () => {
@@ -46,14 +54,13 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
   console.log('Booking ID:', BOOKING?.booking_id);
 
   const makePayment = async () => {
-    updateProgress(30);
+    start();
     const stripe = await loadStripe(
       'pk_test_51Q3wbuIMqVOQVQ5ADpdbpZYftHwMsC4gnTkN21xgQp6CgExTuxvhvXNv85xjLnaElL8rVrokgWeiRGpeFRc6QgWP00x0FwRJx6'
     );
 
-    updateProgress(70);
     const session = await makeStripePayment();
-    updateProgress(100);
+    complete();
     stripe?.redirectToCheckout({
       sessionId: session.id,
     });
@@ -86,17 +93,48 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: price.id, quantity: 1 }],
       mode: 'payment',
-      success_url: `http://192.168.1.6:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://192.168.1.6:3039/reservation_failed/${BOOKING.booking_id}`,
+      success_url: `http://localhost:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:3039/reservation_failed/${BOOKING.booking_id}`,
+      // success_url: `http://172.18.0.1:3039/reservation_success/${BOOKING.booking_id}?session_id={CHECKOUT_SESSION_ID}`,
+      // cancel_url: `http://172.18.0.1:3039/reservation_failed/${BOOKING.booking_id}`,
     });
     return session;
   }
 
-  // loading bar
+  const payWithEwallet = async () => {
+    try {
+      start();
+      const response = await axiosInstance.post(`/ewalletpayment/${bookingId}/`, {
+        amount: totalAmount,
+      });
+      console.log('API Response:', response.data);
+      if (!response.data.success) {
+        //   alert('Sufficient eWallet Balance');
+        // } else {
+        alert('Insufficient eWallet Balance');
+      }
+      complete();
+      const transactionId = response.data.transaction.id;
+      console.log('Transaction ID:', transactionId);
+      if (transactionId) {
+        router.push(`/reservation_success/${BOOKING.booking_id}?transaction_id=${transactionId}`);
+      } else {
+        console.error('Transaction ID is missing in the response');
+      }
+      // router.push(`/reservation_success/${BOOKING.booking_id}?transaction_id=${transactionId}`);
+    } catch (error) {
+      complete();
+      console.error('Error during eWallet payment', error);
+    }
+  };
 
-  const updateProgress = (newProgress: number) => {
-    setProgress(newProgress);
-    // loadingBar.current.continuousStart();
+  const formatLocation = (location: string): string => {
+    if (!location) return '';
+    return location
+      .toLowerCase()
+      .split(' ')
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   return (
@@ -134,13 +172,13 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
             <Typography variant="body1" fontWeight="bold">
               Departure:
             </Typography>
-            <Typography variant="body1">{from}</Typography>
+            <Typography variant="body1">{formatLocation(from)}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight="bold">
               Arrival:
             </Typography>
-            <Typography variant="body1">{to}</Typography>
+            <Typography variant="body1">{formatLocation(to)}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight="bold">
@@ -176,6 +214,19 @@ const Payment: React.FC<BookingDetailsProps> = ({ bookingId, updateCurrentStep }
         </Button>
         <Button variant="contained" color="primary" onClick={makePayment}>
           Pay Now
+        </Button>
+      </Box>
+      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+        <Typography
+          variant="overline"
+          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
+        >
+          OR
+        </Typography>
+      </Divider>
+      <Box gap={1} display="flex" justifyContent="center">
+        <Button variant="contained" color="inherit" onClick={payWithEwallet}>
+          Pay with Ewallet
         </Button>
       </Box>
     </Box>

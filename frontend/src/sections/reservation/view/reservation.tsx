@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { useLoadingBar } from 'react-top-loading-bar';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -18,11 +19,19 @@ export default function ReservationView() {
   const [isBookingLoading, setBookingLoading] = useState<boolean>(true);
   const [totalSeats, setTotalSeats] = useState<number>(0);
   // const [currentStep, setCurrentStep] = useState<number>(0);
-  const [bookingId, setBookingId] = useState<number>(1); // Example booking ID
+
+  const { start, complete } = useLoadingBar({
+    color: 'blue',
+    height: 2,
+  });
+
+  const startRef = useRef(start);
+  const completeRef = useRef(complete);
 
   useEffect(() => {
     // Fetch booking details
     const getBookingDetails = async () => {
+      startRef.current();
       try {
         const response = await axiosInstance.get(`/bookings/${booking_id}`);
         setBookingData(response.data);
@@ -31,6 +40,8 @@ export default function ReservationView() {
       } catch (error) {
         console.error('Error fetching booking details:', error);
         setBookingLoading(false);
+      } finally {
+        completeRef.current();
       }
     };
     if (booking_id) {
@@ -45,9 +56,9 @@ export default function ReservationView() {
     setCurrentStep(step);
   };
 
-  if (isBookingLoading) {
-    return <h1>Loading...</h1>;
-  }
+  // if (isBookingLoading) {
+  //   return <h1>Loading...</h1>;
+  // }
 
   // Convert booking_id to a number
   const bookingIdAsNumber = booking_id ? parseInt(booking_id, 10) : NaN;
@@ -55,9 +66,7 @@ export default function ReservationView() {
   return (
     <DashboardContent>
       <Box display="flex" flexDirection="column" alignItems="flex-start" mb={5}>
-        <Typography variant="h4" mb={3}>
-          Reserve Your Tickets
-        </Typography>
+        <Typography variant="h4">Reserve Your Tickets</Typography>
       </Box>
 
       <Box>

@@ -7,6 +7,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+import EwalletFailedView from 'src/sections/ewallet/view/ewalletfailed';
 
 // ----------------------------------------------------------------------
 
@@ -17,6 +18,11 @@ export const MyBookingsPage = lazy(() => import('src/pages/bookings'));
 export const ReservationPage = lazy(() => import('src/pages/reservations'));
 export const ReservationSuccessPage = lazy(() => import('src/pages/reservation-success'));
 export const ReservationFailedPage = lazy(() => import('src/pages/reservation-failed'));
+export const EWalletPage = lazy(() => import('src/pages/e-wallet'));
+export const EWalletSuccessPage = lazy(() => import('src/pages/ewallet-success'));
+export const EWalletFailedaPage = lazy(() => import('src/pages/ewallet-failed'));
+
+export const LocationTrackingPage = lazy(() => import('src/pages/location-tracking'));
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
@@ -56,6 +62,11 @@ export function Router() {
         { path: '/reservation/:booking_id', element: <ReservationPage /> },
         { path: '/reservation_success/:booking_id', element: <ReservationSuccessPage /> },
         { path: '/reservation_failed/:booking_id', element: <ReservationFailedPage /> },
+        { path: '/ewallet', element: <EWalletPage /> },
+        { path: '/ewallet_success', element: <EWalletSuccessPage /> },
+        { path: '/ewallet_failed', element: <EwalletFailedView /> },
+
+        { path: '/location', element: <LocationTrackingPage /> },
       ],
     },
     {

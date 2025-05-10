@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'base',
-    'rest_framework'
+    'rest_framework',
+    'social_django',  # Google Auth
 ]
 
 MIDDLEWARE = [
@@ -53,11 +54,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2'  # Google authentication
 ]
+
+GOOGLE_CLIENT_ID = "147266487866-m2926e1jhbrg4trrku0celes5avke0do.apps.googleusercontent.com"
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -141,12 +147,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     'http://192.168.1.6:3039',
+    'http://192.168.18.79:3039',
     'http://localhost:3039',
+    'http://172.18.0.1:3039',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3039',
-    "http://192.168.1.6:3039"
+    "http://192.168.1.6:3039",
+    "http://192.168.18.79:3039",
+    'http://172.18.0.1:3039',
 ]

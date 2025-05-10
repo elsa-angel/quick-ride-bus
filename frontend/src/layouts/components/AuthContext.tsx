@@ -28,6 +28,7 @@ export interface IAuthUser {
     id: string;
     email: string;
   };
+  isSuperUser: boolean;
 }
 
 // Create a provider component to wrap around the app

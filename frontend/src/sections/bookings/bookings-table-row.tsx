@@ -1,84 +1,61 @@
 import TableRow from '@mui/material/TableRow';
-
 import TableCell from '@mui/material/TableCell';
-
 import { LoadingButton } from '@mui/lab';
-
-import { useState, useEffect } from 'react';
-
-import axiosInstance from 'src/api/axios-instance';
-
-// ----------------------------------------------------------------------
+import Box from '@mui/material/Box';
 
 export type BookingsProps = {
-  id: string;
+  id: number;
   bus_name: string;
-  from: string;
-  to: string;
-  date: string;
-  from_time: string;
-  to_time: string;
-  fare: string;
+  departure_stop: string;
+  arrival_stop: string;
+  booking_date: string;
+  departure_time: string;
+  arrival_time: string;
+  amount: string;
   status: string;
 };
 
 type BookingsTableRowProps = {
   row: BookingsProps;
+  onCancel: (id: number) => void;
+  onView: (row: BookingsProps) => void;
 };
 
-export function BookingsTableRow({ row }: BookingsTableRowProps) {
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showQRCode, setShowQRCode] = useState(false);
-  const [selectedResIndex, setSelectedResIndex] = useState(-1);
-  const [bookingIdToCancel, setBookingIdToCancel] = useState<number | null>(null);
-
-  const updateQrCodeView = (value: boolean, index = -1) => {
-    if (index >= 0) {
-      setSelectedResIndex(index);
-    }
-    setShowQRCode(value);
-  };
-
-  const handleCancelBooking = async (bookingId: number) => {
-    setBookingIdToCancel(bookingId);
-    setShowConfirm(true);
-  };
+export function BookingsTableRow({ row, onCancel, onView }: BookingsTableRowProps) {
   return (
     <TableRow hover tabIndex={-1} role="checkbox">
-      <TableCell component="th" scope="row">
-        {row.bus_name}
+      <TableCell>{row.id}</TableCell>
+      <TableCell>{row.bus_name}</TableCell>
+      <TableCell>
+        {row.departure_stop
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}
       </TableCell>
-      <TableCell>{row.from}</TableCell>
-      <TableCell>{row.to}</TableCell>
-      <TableCell>{row.date}</TableCell>
-      <TableCell>{row.from_time}</TableCell>
-      <TableCell>{row.to_time}</TableCell>
-      <TableCell>{row.fare}</TableCell>
+      <TableCell>
+        {row.arrival_stop
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')}
+      </TableCell>
+      <TableCell>{row.booking_date}</TableCell>
+      <TableCell>{row.departure_time}</TableCell>
+      <TableCell>{row.arrival_time}</TableCell>
+      <TableCell>₹{row.amount}</TableCell>
       <TableCell>{row.status}</TableCell>
       <TableCell>
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          color="primary"
-          variant="contained"
-          // onClick={() => updateQrCodeView(true, index)}
-          sx={{ width: 265, height: '56px' }}
-        >
-          View
-        </LoadingButton>
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          color="primary"
-          variant="contained"
-          // onClick={() => handleCancelBooking(booking.id)}
-          sx={{ width: 265, height: '56px' }}
-        >
-          View
-        </LoadingButton>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <LoadingButton color="primary" variant="outlined" onClick={() => onView(row)}>
+            View
+          </LoadingButton>
+          {row.status === 'paid' && (
+            <LoadingButton color="error" variant="outlined" onClick={() => onCancel(row.id)}>
+              Cancel
+            </LoadingButton>
+          )}
+        </Box>
       </TableCell>
     </TableRow>
   );
